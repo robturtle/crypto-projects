@@ -1,7 +1,7 @@
 #ifndef CRYPTO_PROJECT_1_KEY_YANG_LIU_0738
 #define CRYPTO_PROJECT_1_KEY_YANG_LIU_0738
 #include <array>
-#include <algorithm>
+#include <boost/assert.hpp>
 
 namespace cipher {
 
@@ -69,7 +69,6 @@ namespace cipher {
   * key instance
   ********************************************************************************/
   class Key {
-  public:
 
   private:
     std::array<int, KEY_LEN> _permutation;
@@ -78,9 +77,11 @@ namespace cipher {
     Key(const std::array<int, KEY_LEN> &permutation):_permutation(permutation) {}
 
     int code(char c, int idx) const {
-      idx %= slots[c - alpha];
+      BOOST_ASSERT(idx < slots[c - alpha]);
       return _permutation[ base[c - alpha] + idx ];
     }
+
+    inline std::array<int, KEY_LEN> key() const {return _permutation;}
 
   };
 
