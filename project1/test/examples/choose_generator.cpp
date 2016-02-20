@@ -33,14 +33,14 @@ struct ArbitraryImpl<Data<T>>
 // RngEngine: random generator engine
 // size: bound of the domain
 template <typename T>
-const typename Arbitrary<Data<T>>::unGenType ArbitraryImpl<Data<T>>::unGen = [](RngEngine &rng, size_t size) {
+const typename Arbitrary<Data<T>>::unGenType ArbitraryImpl<Data<T>>::unGen = [](RngEngine &, size_t) {
   return Data<T>(T());
 };
 
 // make violated sample size smaller
 // should have trivial case or otherwise will cause infinite loop
 template <typename T>
-const typename Arbitrary<Data<T>>::shrinkType ArbitraryImpl<Data<T>>::shrink = [](Data<T> e) {
+const typename Arbitrary<Data<T>>::shrinkType ArbitraryImpl<Data<T>>::shrink = [](Data<T>) {
   vector<Data<T>> ret {};
   return ret;
 };
