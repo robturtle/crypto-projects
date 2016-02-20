@@ -94,7 +94,7 @@ namespace cipher {
     }
 
     int code(char c, int idx) const {
-      BOOST_ASSERT(idx < slots[c - alpha]);
+      BOOST_ASSERT(0 <= idx && idx < slots[c - alpha]);
       return _permutation[ base[c - alpha] + idx ];
     }
 
