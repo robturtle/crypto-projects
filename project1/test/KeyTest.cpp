@@ -1,5 +1,4 @@
-#include "gtest/gtest.h"
-#include "cppqc.h"
+#include "testing.hpp"
 #include "Key.hpp"
 #include <numeric>
 #include <random>
@@ -9,29 +8,15 @@ using namespace cipher;
 using namespace cppqc;
 
 /********************************************************************************
-* Fixture
-********************************************************************************/
-static array<int, KEY_LEN> codes;
-auto engine = default_random_engine{};
-
-class KeyTest: public ::testing::Test {
-protected:
-  void SetUp() {
-    for (size_t i = 0; i < KEY_LEN; i++) codes[i] = i;
-  }
-};
-
-
-/********************************************************************************
 * Basic Pre-conditions
 ********************************************************************************/
-TEST_F (KeyTest, AlphabetRelatedSize) {
-  EXPECT_EQ(alphabet_len, sizeof(slots) / sizeof(int));
-  EXPECT_EQ(alphabet_len, base.size());
+TEST (KeyTest, AlphabetRelatedSize) {
+  ASSERT_EQ(alphabet_len, sizeof(slots) / sizeof(int));
+  ASSERT_EQ(alphabet_len, base.size());
 }
 
-TEST_F (KeyTest, FrequencySumUpTo_KEY_LEN) {
-  EXPECT_EQ((int)KEY_LEN, accumulate(begin(slots), end(slots), 0));
+TEST (KeyTest, FrequencySumUpTo_KEY_LEN) {
+  ASSERT_EQ((int)KEY_LEN, accumulate(begin(slots), end(slots), 0));
 }
 
 
@@ -54,29 +39,15 @@ namespace cipher {
   }
 }
 
-template <>
-struct ArbitraryImpl<Key> {
-  static const typename Arbitrary<Key>::unGenType unGen;
-  static const typename Arbitrary<Key>::shrinkType shrink;
-};
-
-const typename Arbitrary<Key>::unGenType ArbitraryImpl<Key>::unGen = [](RngEngine &, size_t) {
-  array<int, KEY_LEN> copied = codes;
-  shuffle(begin(copied), end(copied), engine);
-  return Key(copied);
-};
-
-const typename Arbitrary<Key>::shrinkType ArbitraryImpl<Key>::shrink = [](Key){
-  return vector<Key>();
-};
+Key gen(RngEngine&, size_t) {return move(Key());}
+REGISTER_ARBITRARY(Key, gen, shrinkNothing);
 
 
 /********************************************************************************
 * Properties
 ********************************************************************************/
-#define RUN_QUICK_CHECK(property) TEST_F (KeyTest, property) \
-  {EXPECT_EQ(cppqc::QC_SUCCESS, cppqc::quickCheckOutput(property()).result);}
 
+// each number should appear exactly once
 struct KeyIsAPermutation: Property<Key> {
   bool check(const Key &k) const override {
     array<int, KEY_LEN> copied = k.key();
@@ -84,8 +55,10 @@ struct KeyIsAPermutation: Property<Key> {
     return codes == copied;
   }
 };
-RUN_QUICK_CHECK(KeyIsAPermutation)
+RUN_QUICK_CHECK(KeyTest, KeyIsAPermutation)
 
+// It's very unlikely that 2 identical keys were generated regarding to the
+// key space 103!
 struct KeyDistNotBias: Property<vector<Key>> {
   bool check(const vector<Key> &keys) const override {
     for (auto i = begin(keys); i < end(keys); ++i) {
@@ -96,8 +69,9 @@ struct KeyDistNotBias: Property<vector<Key>> {
     return true;
   }
 };
-RUN_QUICK_CHECK(KeyDistNotBias)
+RUN_QUICK_CHECK(KeyTest, KeyDistNotBias)
 
+// iterating through ('a', 0), ('a', 1), ..., ('z', 0) should cover all keys
 struct KeySubIndexCoversAllKeys: Property<Key> {
   bool check(const Key& k) const override {
     array<int, KEY_LEN> touched;
@@ -108,8 +82,9 @@ struct KeySubIndexCoversAllKeys: Property<Key> {
         touched[idx++] = k.code(c, i);
       }
     }
+    if (idx != KEY_LEN) return false;
     sort(begin(touched), end(touched));
     return touched == codes;
   }
 };
-RUN_QUICK_CHECK(KeySubIndexCoversAllKeys)
+RUN_QUICK_CHECK(KeyTest, KeySubIndexCoversAllKeys)

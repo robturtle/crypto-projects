@@ -1,7 +1,9 @@
 #ifndef CRYPTO_PROJECT_1_KEY_YANG_LIU_0738
 #define CRYPTO_PROJECT_1_KEY_YANG_LIU_0738
+#include "rand_gen.hpp"
 #include <array>
 #include <boost/assert.hpp>
+#include <random>
 
 namespace cipher {
 
@@ -63,7 +65,16 @@ namespace cipher {
       }
     };
     static int ___trash = gen_base< omega >::generate();
+
+    static std::array<int, KEY_LEN> gen_codes() {
+      std::array<int, KEY_LEN> ary;
+      for (std::size_t i = 0; i < KEY_LEN; i++) ary[i] = i;
+      return std::move(ary);
+    }
   }
+
+  // codes = [0, 1, 2, ..., 102]
+  static const std::array<int, KEY_LEN> codes = gen_codes();
 
   /********************************************************************************
   * key instance
@@ -76,6 +87,12 @@ namespace cipher {
   public:
     Key(const std::array<int, KEY_LEN> &permutation):_permutation(permutation) {}
 
+    Key() {
+      std::array<int, KEY_LEN> copied = codes;
+      std::shuffle(std::begin(copied), std::end(copied), engine);
+      _permutation = std::move(copied);
+    }
+
     int code(char c, int idx) const {
       BOOST_ASSERT(idx < slots[c - alpha]);
       return _permutation[ base[c - alpha] + idx ];
@@ -83,7 +100,7 @@ namespace cipher {
 
     inline std::array<int, KEY_LEN> key() const {return _permutation;}
 
-  };
+  }; /* class Key */
 
 } /* cipher */
 
