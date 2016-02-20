@@ -11,7 +11,7 @@ endif ()
 ################################################################################
 # test for fixtures
 ################################################################################
-option (fixture-test "Test for sample generators" OFF)
+option (fixture-test "Test for sample generators" ON)
 
 if (fixture-test)
   enable_testing ()
