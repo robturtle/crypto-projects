@@ -1,10 +1,10 @@
 #ifndef CRYPTO_PROJECT_1_KEY_YANG_LIU_0738
 #define CRYPTO_PROJECT_1_KEY_YANG_LIU_0738
 #include "rand_gen.hpp"
+#include "testing.hpp"
 #include <array>
 #include <boost/assert.hpp>
 #include <random>
-#include <iostream>
 
 namespace cipher {
 
@@ -114,5 +114,9 @@ namespace cipher {
   }; /* class Key */
 
 } /* cipher */
+
+static cipher::Key gen(cppqc::RngEngine&, std::size_t) {return std::move(cipher::Key());}
+REGISTER_ARBITRARY(cipher::Key, gen, cppqc::shrinkNothing);
+
 
 #endif /* CRYPTO_PROJECT_1_KEY_YANG_LIU_0738 */

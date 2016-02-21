@@ -39,10 +39,6 @@ namespace cipher {
   }
 }
 
-Key gen(RngEngine&, size_t) {return move(Key());}
-REGISTER_ARBITRARY(Key, gen, shrinkNothing);
-
-
 /********************************************************************************
 * Properties
 ********************************************************************************/
