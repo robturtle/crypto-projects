@@ -1,0 +1,1 @@
+#define RESOURCE(path) @RESOURCE_PATH@ path

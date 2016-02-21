@@ -14,3 +14,8 @@ add_test (cpp-quickcheck-worked cpp_quickcheck_worked)
 add_executable (quickcheck_choose_generator choose_generator.cpp)
 target_link_libraries (quickcheck_choose_generator cppqc)
 add_test (quickcheck-choose-generator quickcheck_choose_generator)
+
+# example of using setup library
+add_executable (setup_test setup_test.cpp)
+target_link_libraries (setup_test setup)
+add_test (setup-test setup_test)
