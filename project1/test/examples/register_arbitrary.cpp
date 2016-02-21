@@ -1,10 +1,6 @@
 #include "cppqc.h"
 
-// This property tests that A*A > A holds.
-//
-// In general, this is not true, for instance, if A is zero.
-// However, by using the "choose" generator, we can define that
-// A is in a given interval (between 2 and 1000 in this example).
+// Demonstrate how to register a custom data type to QuickCheck
 using namespace cppqc;
 using namespace std;
 
