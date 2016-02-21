@@ -4,6 +4,7 @@
 #include <array>
 #include <boost/assert.hpp>
 #include <random>
+#include <iostream>
 
 namespace cipher {
 
@@ -36,6 +37,7 @@ namespace cipher {
       6 /* s */, 9 /* t */, 3 /* u */, 1 /* v */, 2 /* w */, 1 /* x */,
       2 /* y */, 1 /* z */,
   };
+  static int slot_of(char c) {return slots[c-alpha];};
 
   /// start index of a letter within the whole array
   // Ex: base['b' - 'a'] = 8; base['c' - 'a'] = 9
@@ -94,8 +96,17 @@ namespace cipher {
     }
 
     int code(char c, int idx) const {
-      BOOST_ASSERT(0 <= idx && idx < slots[c - alpha]);
+      BOOST_ASSERT(alpha <= c && c <= omega);
+      BOOST_ASSERT(0 <= idx && idx < slot_of(c));
       return _permutation[ base[c - alpha] + idx ];
+    }
+
+    char plain(int code) const {
+      BOOST_ASSERT(0 <= code && code < (int)KEY_LEN);
+      int index = std::find(_permutation.begin(), _permutation.end(), code) - _permutation.begin();
+      char ch = alpha;
+      for (int pos = 0; pos <= index; pos += slot_of(ch++)) {}
+      return ch-1;
     }
 
     inline std::array<int, KEY_LEN> key() const {return _permutation;}

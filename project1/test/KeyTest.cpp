@@ -88,3 +88,15 @@ struct KeySubIndexCoversAllKeys: Property<Key> {
   }
 };
 RUN_QUICK_CHECK(KeyTest, KeySubIndexCoversAllKeys)
+
+struct KeyInvertCodeToCharCorrectly: Property<Key, char> {
+  KeyInvertCodeToCharCorrectly(): Property(Arbitrary<Key>(), choose(alpha, omega)) {}
+
+  bool check(const Key &k, const char &c) const override {
+    std::uniform_int_distribution<int> uni(0, slot_of(c) - 1);
+    int rand_index = uni(engine);
+    return c == k.plain(k.code(c, rand_index));
+  }
+
+};
+RUN_QUICK_CHECK(KeyTest, KeyInvertCodeToCharCorrectly)
