@@ -113,10 +113,24 @@ namespace cipher {
 
   }; /* class Key */
 
+  std::ostream& operator<<(std::ostream &o, const Key &k) {
+    char ch = alpha;
+    int idx = 0;
+    for (int slot : slots) {
+      o << ch++ << ": ";
+      auto key = k.key();
+      for (int i = 0; i < slot; i++) {
+        o << key[idx++] << ", ";
+      }
+      o << "\n";
+    }
+    return o;
+  }
+
 } /* cipher */
 
-static cipher::Key gen(cppqc::RngEngine&, std::size_t) {return std::move(cipher::Key());}
-REGISTER_ARBITRARY(cipher::Key, gen, cppqc::shrinkNothing);
+static cipher::Key gen_key(cppqc::RngEngine&, std::size_t) {return std::move(cipher::Key());}
+REGISTER_ARBITRARY(cipher::Key, gen_key, cppqc::shrinkNothing);
 
 
 #endif /* CRYPTO_PROJECT_1_KEY_YANG_LIU_0738 */
