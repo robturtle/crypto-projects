@@ -15,42 +15,42 @@
 namespace cipher {
 
   class Scheduler {
+    friend std::ostream& operator<<(std::ostream&, const Scheduler&);
   public:
 
     // (plain, key, plain_pos, plain_len) => code
     using SchedulerType = std::function<int (char, const Key&, int, int)>;
 
-    std::string name;
-    SchedulerType schedule;
-
     Scheduler(std::string name, SchedulerType schedule):name(name), schedule(schedule) {}
-
-    char dec(int code, const Key &k) const {return k.plain(code);}
 
     std::vector<int> enc(const std::string &plaintext, const Key &k) const {
       std::vector<int> ciphercode;
       int pos = 0;
-      std::for_each(plaintext.begin(), plaintext.end(), [&](char c) {
-          ciphercode.push_back(schedule(c, k, pos++, plaintext.size()));
-        });
+      for (char c : plaintext) {
+        ciphercode.push_back(schedule(c, k, pos++, plaintext.size()));
+      }
       return std::move(ciphercode);
     }
 
     std::string dec(const std::vector<int> &ciphercode, const Key &k) const {
       std::ostringstream out;
-      std::for_each(ciphercode.begin(), ciphercode.end(), [&](int c) {
-          out << dec(c, k);
-        });
+      for (int c : ciphercode) out << k.plain(c);
       return std::move(out.str());
     }
 
+  private:
+    std::string name;
+    SchedulerType schedule;
+
   }; /* Scheduler */
+
 
   std::ostream& operator<<(std::ostream& o, const Scheduler &s) {o << s.name; return o;}
 
   static Scheduler mod_by_plain_position("Mod by Plaintext Position", [](char c, const Key &k, int pos, int) {
       return k.code(c, pos % slot_of(c));
     });
+
 
 
 } /* cipher */
