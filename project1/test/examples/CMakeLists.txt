@@ -11,9 +11,14 @@ target_link_libraries (cpp_quickcheck_worked cppqc)
 add_test (cpp-quickcheck-worked cpp_quickcheck_worked)
 
 # example of using quickcheck for custom class
-add_executable (quickcheck_choose_generator choose_generator.cpp)
-target_link_libraries (quickcheck_choose_generator cppqc)
-add_test (quickcheck-choose-generator quickcheck_choose_generator)
+add_executable (quickcheck_register_arbitrary register_arbitrary.cpp)
+target_link_libraries (quickcheck_register_arbitrary cppqc)
+add_test (quickcheck-register-arbitrary quickcheck_register_arbitrary)
+
+# example of using quickcheck generators
+add_executable (quickcheck_generators quickcheck_generators.cpp)
+target_link_libraries (quickcheck_generators cppqc)
+add_test (quickcheck-generators quickcheck_generators)
 
 # example of using setup library
 add_executable (setup_test setup_test.cpp)
