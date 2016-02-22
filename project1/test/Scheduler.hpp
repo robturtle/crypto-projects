@@ -48,10 +48,9 @@ namespace cipher {
 
   std::ostream& operator<<(std::ostream& o, const Scheduler &s) {o << s.name; return o;}
 
-  static Scheduler::SchedulerType _s = [](char c, const Key &k, int pos, int) {
-    return k.code(c, pos % slot_of(c));
-  };
-  static Scheduler mod_by_plain_position("Mod by Plaintext Position", _s);
+  static Scheduler mod_by_plain_position("Mod by Plaintext Position", [](char c, const Key &k, int pos, int) {
+      return k.code(c, pos % slot_of(c));
+    });
 
 
 } /* cipher */
