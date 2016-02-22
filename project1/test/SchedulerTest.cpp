@@ -1,3 +1,5 @@
+#include "config.hpp"
+#include "setup.hpp"
 #include "testing.hpp"
 #include "Key.hpp"
 #include "Scheduler.hpp"
@@ -7,34 +9,26 @@ using namespace cipher;
 
 // The scheduling algorithm is a deterministic algorithm (that is, it does not use new random bits)
 // that may depend on:
-// 1. order of the letter within the ciphertext
-// 2. length of ciphertext
+// 1. order of the letter within the plaintext
+// 2. length of plaintext
 // 3. the length of the list on that row (slot number)
 //
-// NOTE the ciphertext above is refering to a single word
+// NOTE the plaintext above is refering to a single word
+
+/********************************************************************************
+* Data
+********************************************************************************/
+static vector<vector<string>> dictionaries = load_dictionaries(RESOURCE("plaintext_dictionary.txt"));
 
 
 /********************************************************************************
-* Generator of Key
+* Generator of Scheduler
 ********************************************************************************/
-namespace cipher {
-  ostream& operator<<(ostream& o, const Scheduler &s) {
-    o << s.name;
-    return o;
-  }
-}
-
-// randomly choose one scheduler
-static auto schedulerGen = elements({
-    mod_by_cipher_position, // default scheduler
-      // add new scheduler here
-      });
-
 struct SchedulerProperty: Property<Scheduler, Key, string> {
-  SchedulerProperty(): Property(schedulerGen,
+  SchedulerProperty(): Property(gen_scheduler,
                                 Arbitrary<Key>(),
                                 // pick one dictionary, and pick one word from it
-                                elements(elements(dictionaries)));
+                                sample_of<vector<vector<string>>, string>(dictionaries)) {}
 };
 
 
@@ -43,8 +37,9 @@ struct SchedulerProperty: Property<Scheduler, Key, string> {
 ********************************************************************************/
 
 // Dec(Enc(m)) = m
-struct SchedulerInvertCorrectly: SchedulerProperty {
-  bool check(const Scheduler &s, const Key &k, const string &m) {
+struct Correctness: SchedulerProperty {
+  bool check(const Scheduler &s, const Key &k, const string &m) const override {
     return s.dec(s.enc(m, k), k) == m;
   }
 };
+RUN_QUICK_CHECK(ScheduleTest, Correctness)
