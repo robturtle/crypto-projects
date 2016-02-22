@@ -1,12 +1,11 @@
-
+enable_testing ()
 ################################################################################
-# my library function use exmaples
+# Test code breaker implementation
 ################################################################################
-option (testlib-examples "Example code of using gtest and CppQuickCheck" OFF)
+add_executable (CodeBreakerTest CodeBreakerTest.cpp)
+target_link_libraries (CodeBreakerTest gtest gtest_main cppqc setup code_breaker)
+add_test (code-breaker-test CodeBreakerTest)
 
-if (testlib-examples)
-  add_subdirectory (examples)
-endif ()
 
 ################################################################################
 # test for fixtures
@@ -14,7 +13,6 @@ endif ()
 option (fixture-test "Test for sample generators" ON)
 
 if (fixture-test)
-  enable_testing ()
 
   add_executable (KeyTest KeyTest.cpp)
   target_link_libraries (KeyTest gtest gtest_main cppqc setup)
@@ -23,4 +21,13 @@ if (fixture-test)
   add_executable (SchedulerTest SchedulerTest.cpp)
   target_link_libraries (SchedulerTest gtest gtest_main cppqc setup)
   add_test (scheduler-test SchedulerTest)
+endif ()
+
+
+################################################################################
+# my library function use exmaples
+################################################################################
+option (testlib-examples "Example code of using gtest and CppQuickCheck" OFF)
+if (testlib-examples)
+  add_subdirectory (examples)
 endif ()
