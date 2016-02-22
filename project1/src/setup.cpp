@@ -5,16 +5,20 @@
 #include <algorithm>
 #include <iterator>
 #include <iostream>
+#include <boost/tokenizer.hpp>
 using namespace std;
+using namespace boost;
 
 namespace cipher {
 
-  vector<string> split(const string &s) {
-    istringstream in(s);
+  vector<string> split(const string &s, const string &sep) {
     vector<string> words;
-    copy(istream_iterator<string>(in),
-         istream_iterator<string>(),
-         back_inserter(words));
+    size_t pos;
+    string str(s);
+    while ((pos = str.find(sep)) != string::npos) {
+      words.push_back(str.substr(0, pos));
+      str.erase(0, pos + sep.length());
+    }
     return move(words);
   }
 
