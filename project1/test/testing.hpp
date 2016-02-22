@@ -3,6 +3,7 @@
 #include "gtest/gtest.h"
 #include "cppqc.h"
 #include <vector>
+#include <type_traits>
 
 // specify how a new data type varies and shrinks
 // register it so the it can play as the type variable in QuickCheck
@@ -28,5 +29,50 @@
 
 #define RUN_QUICK_CHECK_F(fixture, property) TEST_F (fixture, property)    \
   {EXPECT_EQ(cppqc::QC_SUCCESS, cppqc::quickCheckOutput(property()).result);}
+
+
+// cppqc::elements can only accept std::initializer_list but not other containers
+// so I have to write a generic one here
+template <typename C, typename T>
+class SampleGenerator {
+public:
+
+  SampleGenerator(C container):
+    _container(std::vector<typename C::value_type>(std::begin(container), std::end(container))) {}
+
+  T unGen(cppqc::RngEngine &rng, std::size_t) {
+    return sample(_container, rng);
+  }
+
+  std::vector<T> shrink(const T&) {return std::vector<T>();}
+
+private:
+  std::vector<typename C::value_type> _container;
+
+  template <typename S>
+  typename std::enable_if<std::is_same<typename S::value_type, T>::value, T>::type
+  sample(S container, cppqc::RngEngine &rng) {
+    return take(container, rng);
+  }
+
+  template <typename S>
+  typename std::enable_if<!std::is_same<typename S::value_type, T>::value, T>::type
+  sample(S container, cppqc::RngEngine &rng) {
+    return sample(take(container, rng), rng);
+  }
+
+  template <typename S>
+  typename S::value_type
+  take(S container, cppqc::RngEngine &rng) {
+    boost::uniform_int<std::size_t> uni(0, container.size() - 1);
+    return container[uni(rng)];
+  }
+
+}; /* SampleGenerator */
+
+template<typename C, typename T>
+SampleGenerator<C, T> sample_of(C container) {
+  return std::move(SampleGenerator<C, T>(container));
+}
 
 #endif /* GTEST_QUICKCHECK_COORPERATE_YANG_LIU_021 */
