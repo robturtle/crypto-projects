@@ -5,13 +5,6 @@ set (CMAKE_CXX_FLAGS "-std=c++11")
 set (CMAKE_MACOSX_RPATH 1)
 
 ################################################################################
-# Main
-################################################################################
-include_directories (${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR})
-add_subdirectory (src)
-
-
-################################################################################
 # Resources
 ################################################################################
 file (COPY resources DESTINATION ${CMAKE_BINARY_DIR})
@@ -21,6 +14,13 @@ configure_file (
   ${PROJECT_BINARY_DIR}/include/config.hpp
   )
 include_directories (${PROJECT_BINARY_DIR}/include)
+
+
+################################################################################
+# Main
+################################################################################
+include_directories (${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR})
+add_subdirectory (src)
 
 
 ################################################################################

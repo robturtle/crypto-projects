@@ -16,11 +16,6 @@ using namespace cipher;
 // and challenge the code breaker
 
 /********************************************************************************
- * Data
- ********************************************************************************/
-static vector<vector<string>> dictionaries = load_dictionaries(RESOURCE("plaintext_dictionary.txt"));
-
-/********************************************************************************
  * Generator of ciphertext
  ********************************************************************************/
 static size_t WORD_NUM_MIN = 5;

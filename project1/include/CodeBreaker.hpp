@@ -1,7 +1,10 @@
 #ifndef CRYPTO_PROJECT_1_CODE_BREAKER_YANG_LIU_1023
 #define CRYPTO_PROJECT_1_CODE_BREAKER_YANG_LIU_1023
+#include "config.hpp"
 #include "setup.hpp"
+
 namespace cipher {
+  static std::vector<std::vector<std::string>> dictionaries = cipher::load_dictionaries(RESOURCE("plaintext_dictionary.txt"));
 
   using words = std::vector<std::string>;
 
