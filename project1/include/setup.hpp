@@ -13,7 +13,7 @@ namespace cipher {
     std::ostringstream out;
     auto i = words.begin();
     auto end = words.end();
-    out << *i;
+    out << *i++;
     for (; i != end; ++i) out << sep << *i;
     return move(out.str());
   }
