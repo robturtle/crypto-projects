@@ -36,7 +36,7 @@ struct SchedulerProperty: Property<Scheduler, Key, string> {
 * Properties
 ********************************************************************************/
 
-// Dec(Enc(m)) = m
+// Dec(Enc(word)) = word
 struct Correctness: SchedulerProperty {
   bool check(const Scheduler &s, const Key &k, const string &m) const override {
     return s.dec(s.enc(m, k), k) == m;

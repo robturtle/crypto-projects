@@ -17,6 +17,7 @@ namespace cipher {
   class Scheduler {
     friend std::ostream& operator<<(std::ostream&, const Scheduler&);
   public:
+    std::string name;
 
     // (plain, key, plain_pos, plain_len) => code
     using SchedulerType = std::function<int (char, const Key&, int, int)>;
@@ -38,8 +39,8 @@ namespace cipher {
       return std::move(out.str());
     }
 
+
   private:
-    std::string name;
     SchedulerType schedule;
 
   }; /* Scheduler */
