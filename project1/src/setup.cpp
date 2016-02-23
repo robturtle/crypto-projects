@@ -5,9 +5,7 @@
 #include <algorithm>
 #include <iterator>
 #include <iostream>
-#include <boost/tokenizer.hpp>
 using namespace std;
-using namespace boost;
 
 namespace cipher {
 
