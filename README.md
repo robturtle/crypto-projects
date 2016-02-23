@@ -1,10 +1,10 @@
 # Crypto Projects
+[![Floobits Status](https://floobits.com/robturtle/crypto-projects.svg)](https://floobits.com/robturtle/crypto-projects/redirect)
 
 ## Build Environments
 ```
        cmake: 3.4.1
 c++ standard: c++11
-       boost: stable 1.59.0 (will be port into after building of test suites)
     compiler: Apple LLVM version 7.0.2 (clang-700.1.81)
 ```
 Standard is chosen as `c++11` to take the advantage of compatibility.

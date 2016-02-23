@@ -1,4 +1,5 @@
 # Cryptanalysis of Permutation Ciphers
+[![Floobits Status](https://floobits.com/robturtle/crypto-projects.svg)](https://floobits.com/robturtle/crypto-projects/redirect)
 
 ## Test framework
 First, build the project like the normal CMake project:
