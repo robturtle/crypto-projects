@@ -35,6 +35,7 @@ if (test)
   include_directories (${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 
   set (BOOST_ROOT ${PROJECT_SOURCE_DIR}/lib)
+  include_directories (${PROJECT_SOURCE_DIR}/lib)
 
   add_subdirectory (lib/CppQuickCheck)
   include_directories (${CppQuickCheck_SOURCE_DIR}/include ${CppQuickCheck_SOURCE_DIR})
