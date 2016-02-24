@@ -8,17 +8,19 @@
 // specify how a new data type varies and shrinks
 // register it so the it can play as the type variable in QuickCheck
 #define REGISTER_ARBITRARY(Class, gen, shrinker)                        \
-  template <> struct cppqc::ArbitraryImpl<Class> {                      \
-    static const typename cppqc::Arbitrary<Class>::unGenType unGen;     \
-    static const typename cppqc::Arbitrary<Class>::shrinkType shrink;   \
-  };                                                                    \
-  const typename cppqc::Arbitrary<Class>::unGenType                     \
-  cppqc::ArbitraryImpl<Class>::unGen = [](cppqc::RngEngine &rng, std::size_t size) { \
-    return gen(rng, size);                                              \
-  };                                                                    \
-  const typename cppqc::Arbitrary<Class>::shrinkType                    \
-  cppqc::ArbitraryImpl<Class>::shrink = [](Class c) {                   \
-    return shrinker(c);                                                 \
+  namespace cppqc {                                                     \
+    template <> struct cppqc::ArbitraryImpl<Class> {                    \
+      static const typename cppqc::Arbitrary<Class>::unGenType unGen;   \
+      static const typename cppqc::Arbitrary<Class>::shrinkType shrink; \
+    };                                                                  \
+    const typename cppqc::Arbitrary<Class>::unGenType                   \
+    cppqc::ArbitraryImpl<Class>::unGen = [](cppqc::RngEngine &rng, std::size_t size) { \
+      return gen(rng, size);                                            \
+    };                                                                  \
+    const typename cppqc::Arbitrary<Class>::shrinkType                  \
+    cppqc::ArbitraryImpl<Class>::shrink = [](Class c) {                 \
+      return shrinker(c);                                               \
+    };                                                                  \
   }
 
 
