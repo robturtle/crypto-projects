@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <iterator>
 #include <iostream>
+#include <map>
 using namespace std;
 
 namespace cipher {
@@ -38,4 +39,29 @@ namespace cipher {
     return move(dictionaries);
   }
 
-}
+  // this function only split a single dictionary
+  map<int, words> split_dictionary(words dictionary) {
+    while(getline(diction, buffer))
+    {
+      ifastream<basic_formatters, string_reader> myString(&string);
+      if(buffer >> key)
+      {
+        //Do nothing for now
+      }
+      else
+      {
+        buffer.split()
+      }
+    }
+    Plaintext Dictionary (5 plaintexts):
+  }
+
+  // this function combine them all
+  vector<map<int, words>> split_dictionaries(const string &path) {
+    vector<map<int, words>> maps;
+    vector<words> dictionaries = load_dictionaries(path);
+    for (words dic : dictionaries) maps.push_back(split_dictionary(dic));
+    return move(maps);
+  }
+
+} /* cipher */

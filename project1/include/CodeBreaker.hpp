@@ -4,9 +4,7 @@
 #include "setup.hpp"
 
 namespace cipher {
-  static std::vector<std::vector<std::string>> dictionaries = cipher::load_dictionaries(RESOURCE("plaintext_dictionary.txt"));
-
-  using words = std::vector<std::string>;
+  static std::vector<std::map<int, cipher::words>> dictionary_maps = split_dictionaries(RESOURCE("plaintext_dictionary.txt"));
 
   class CodeBreakerBase {
 

@@ -3,10 +3,12 @@
 #include <vector>
 #include <string>
 #include <sstream>
+#include <map>
 
 namespace cipher {
-
-  extern std::vector<std::string> split(const std::string &, const std::string &sep = " ");
+  using words = std::vector<std::string>;
+  
+  extern words split(const std::string &, const std::string &sep = " ");
 
   template <typename T>
   std::string join(const std::vector<T> &words, const std::string &sep = " ") {
@@ -18,8 +20,10 @@ namespace cipher {
     return move(out.str());
   }
 
-  extern std::vector<std::vector<std::string>> load_dictionaries(const std::string &path);
+  extern std::vector<words> load_dictionaries(const std::string &path);
 
+  extern std::map<int, words> split_dictionary(std::vector<std::string> dictionary);
+  extern std::vector<std::map<int, words>> split_dictionaries(const std::string &path);
 }
 
 #endif // CRYPTO_PRJECT_1_YANG_LIU_SETUP_0630
