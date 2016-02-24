@@ -15,6 +15,8 @@ using namespace cipher;
 // encode it into ciphertext,
 // and challenge the code breaker
 
+static vector<vector<string>> dictionaries = load_dictionaries(RESOURCE("plaintext_dictionary.txt"));
+
 /********************************************************************************
  * Generator of ciphertext
  ********************************************************************************/
