@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.4)
+cmake_minimum_required (VERSION 3.0)
 project (CryptoProject1)
 set (CMAKE_CXX_FLAGS "-std=c++11")
 # for CppQuickcheck
