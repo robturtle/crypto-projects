@@ -1,10 +1,10 @@
 #ifndef CRYPTO_PROJECT_1_CODE_BREAKER_YANG_LIU_1023
 #define CRYPTO_PROJECT_1_CODE_BREAKER_YANG_LIU_1023
+#include <iostream>
 #include "config.hpp"
 #include "setup.hpp"
 
 namespace cipher {
-  static std::vector<Dictionary> dictionary_maps = analyze_dictionaries(RESOURCE("plaintext_dictionary.txt"));
 
   class CodeBreakerBase {
 
@@ -16,14 +16,14 @@ namespace cipher {
     }
 
   protected:
-    virtual words _solve(words ciphers) = 0;
+    virtual words _solve(const words &ciphers) = 0;
 
   }; /* CodeBreakerBase */
 
 
   class CodeBreaker: public CodeBreakerBase {
   protected:
-    words _solve(words ciphers);
+    words _solve(const words &ciphers) override;
   }; /* CodeBreaker */
 
 
