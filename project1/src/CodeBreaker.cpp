@@ -2,6 +2,7 @@
 #include "key_basic.hpp"
 #include "CodeBreaker.hpp"
 #include <iostream>
+#include <algorithm>
 #include <boost/assert.hpp>
 using namespace std;
 
