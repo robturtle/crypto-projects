@@ -12,6 +12,7 @@ namespace cipher {
 
   template <typename T>
   std::string join(const std::vector<T> &words, const std::string &sep = " ") {
+    if (words.empty()) return "";
     std::ostringstream out;
     auto i = words.begin();
     auto end = words.end();
@@ -28,6 +29,7 @@ namespace cipher {
     Dictionary(std::map<std::size_t, words> dict_map, std::map<std::size_t, int> priority)
       : dict_map(dict_map), priority(priority) {}
     std::map<std::size_t, words> dict_map;
+    // priority[x] = 0 means non existed
     std::map<std::size_t, int> priority; // word length => priority, the smaller value, the higher priority
   }; /* Dictionary */
 
