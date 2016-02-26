@@ -5,6 +5,5 @@ int main(void) {
   string input;
   getline(cin, input);
   cout << '\'' << input << '\'' << endl;
-  cipher::CodeBreaker();
-  //cout << cipher::CodeBreaker().solve(input) << endl;
+  cout << cipher::CodeBreaker().solve(input) << endl;
 }
