@@ -15,18 +15,19 @@ using namespace cipher;
 // encode it into ciphertext,
 // and challenge the code breaker
 
-static vector<vector<string>> dictionaries = load_dictionaries(RESOURCE("plaintext_dictionary.txt"));
+static vector<vector<string>> plaintext_sets = load_dictionaries(RESOURCE("plaintext_dictionary.txt"));
 
 /********************************************************************************
  * Generator of ciphertext
  ********************************************************************************/
-static size_t WORD_NUM_MIN = 5;
-static size_t WORD_NUM_MAX = 50;
+static const size_t WORD_NUM_MIN = 5;
+static const size_t WORD_NUM_MAX = 50;
 
 struct PlaintextGenerator {
   vector<string> unGen(RngEngine &rng, size_t) {
     vector<string> words;
-    vector<string> dictionary = random_take(dictionaries, rng);
+    vector<string> dictionary = random_take(plaintext_sets, rng);
+    cout << "Choosing dictionary of " << dictionary[0] << endl;
     size_t word_num = boost::uniform_int<size_t>(WORD_NUM_MIN, WORD_NUM_MAX)(rng);
     for (size_t i = 0; i < word_num; i++)
       words.push_back(random_take(dictionary, rng));
