@@ -24,3 +24,7 @@ add_test (quickcheck-generators quickcheck_generators)
 add_executable (setup_test setup_test.cpp)
 target_link_libraries (setup_test setup)
 add_test (setup-test setup_test)
+
+# example of loading and analysis dictionaries
+add_executable (analyze_dictionaries analyze_dictionaries.cpp)
+target_link_libraries (analyze_dictionaries setup)

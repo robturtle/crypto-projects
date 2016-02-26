@@ -19,6 +19,7 @@ namespace cipher {
       words.push_back(str.substr(0, pos));
       str.erase(0, pos + sep.length());
     }
+    if (!str.empty()) words.push_back(str.substr(0, str.length()));
     return move(words);
   }
 
@@ -84,26 +85,29 @@ namespace cipher {
 
     For example, the fault tolerance of "aet" = 8 * 13 * 9 = 936
   */
-  inline int fault_tolerance(const string &word) {
-    int sum = 1;
+  inline unsigned long long fault_tolerance(const string &word) {
+    unsigned long long sum = 1;
     for (auto letter : word) sum *= slot_of(letter);
     return sum;
   }
 
-  Dictionary parse_dictionary(const words &dictionary) {
+  map<string, unsigned long long> fault_tolerances;
+
+  Dictionary analyze_dictionary(const words &dictionary) {
     map<size_t, words> dict_map;
-    for (string word : dictionary) {
+    for (const string &word : dictionary) {
       size_t size = word.length();
       dict_map[size].push_back(word);
+      fault_tolerances[word] = fault_tolerance(word);
     }
 
     vector<size_t> word_lengthes;
     // sort each sub dictionary by fault tolerance
-    for (auto entry : dict_map) {
+    for (auto &entry : dict_map) {
       word_lengthes.push_back(entry.first);
       words &sub_dict = entry.second;
       sort(begin(sub_dict), end(sub_dict), [](string a, string b) {
-          return fault_tolerance(a) < fault_tolerance(b);
+          return fault_tolerances[a] < fault_tolerances[b];
         });
     }
 
@@ -124,10 +128,10 @@ namespace cipher {
   }
 
   // this function combine them all
-  vector<Dictionary> parse_dictionaries(const string &path) {
+  vector<Dictionary> analyze_dictionaries(const string &path) {
     vector<Dictionary> maps;
     vector<words> dictionaries = load_dictionaries(path);
-    for (words dict : dictionaries) maps.push_back(parse_dictionary(dict));
+    for (const words &dict : dictionaries) maps.push_back(analyze_dictionary(dict));
     return move(maps);
   }
 

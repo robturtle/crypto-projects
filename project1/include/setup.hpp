@@ -31,9 +31,9 @@ namespace cipher {
     std::map<std::size_t, int> priority; // word length => priority, the smaller value, the higher priority
   }; /* Dictionary */
 
-  extern int fault_tolerance(const std::string &word);
-  extern Dictionary parse_dictionary(const words &dictionary);
-  extern std::vector<Dictionary> parse_dictionaries(const std::string &path);
+  extern std::map<std::string, unsigned long long> fault_tolerances;
+  extern Dictionary analyze_dictionary(const words &dictionary);
+  extern std::vector<Dictionary> analyze_dictionaries(const std::string &path);
 
 } /* cipher */
 
