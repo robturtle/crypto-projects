@@ -1,6 +1,7 @@
 #ifndef CRYPTO_PROJECT_1_YANG_LIU_SCHEDULER_0412
 #define CRYPTO_PROJECT_1_YANG_LIU_SCHEDULER_0412
 #include "Key.hpp"
+#include <random>
 #include <vector>
 #include <string>
 #include <algorithm>
@@ -53,13 +54,18 @@ namespace cipher {
     });
 
 
+  static Scheduler uniform("Uniform", [](char c, const Key& k, int, int) {
+      std::uniform_int_distribution<int> uni(0, slot_of(c) - 1);
+      return k.code(c, uni(engine));
+    });
 
 } /* cipher */
 
 // generator of Scheduler
 // randomly choose one scheduler
 static auto gen_scheduler = cppqc::elements({
-    cipher::mod_by_plain_position, // default scheduler
+    //cipher::mod_by_plain_position, // default scheduler
+    cipher::uniform,
       // add new scheduler here
       });
 
