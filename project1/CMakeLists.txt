@@ -1,14 +1,16 @@
 cmake_minimum_required (VERSION 3.0)
 project (CryptoProject1)
 set (CMAKE_CXX_FLAGS "-std=c++11")
+set (CMAKE_CXX_FLAGS_RELEASE "-O3")
 # for CppQuickcheck
 set (CMAKE_MACOSX_RPATH 1)
 
 ################################################################################
 # Resources
 ################################################################################
-file (COPY resources DESTINATION ${CMAKE_BINARY_DIR})
-set (RESOURCE_PATH "\"${CMAKE_BINARY_DIR}/resources/\"")
+file (COPY resources DESTINATION ${PROJECT_BINARY_DIR})
+file (COPY "resources/plaintext_dictionary.txt" DESTINATION ${PROJECT_BINARY_DIR}/src)
+set (RESOURCE_PATH "\"${PROJECT_BINARY_DIR}/resources/\"")
 configure_file (
   ${PROJECT_SOURCE_DIR}/include/config.hpp.in
   ${PROJECT_BINARY_DIR}/include/config.hpp
@@ -22,7 +24,7 @@ include_directories (${PROJECT_BINARY_DIR}/include)
 set (BOOST_ROOT ${PROJECT_SOURCE_DIR}/lib)
 include_directories (${PROJECT_SOURCE_DIR}/lib)
 
-include_directories (${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR})
+include_directories (${PROJECT_SOURCE_DIR}/include ${PROJECT_SOURCE_DIR})
 add_subdirectory (src)
 
 

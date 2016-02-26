@@ -7,9 +7,7 @@
 using namespace std;
 
 namespace cipher {
-  namespace data {
-    vector<Dictionary> dictionaries = analyze_dictionaries(RESOURCE("plaintext_dictionary.txt"));
-
+  namespace detail {
     struct Decryptor {
       map<int, char> invert_key;
       map<int, size_t> use_count;
@@ -48,8 +46,8 @@ namespace cipher {
 
     }; /* Decryptor */
 
-  } /* data */
-  data::Decryptor decryptor;
+  } /* detail */
+  detail::Decryptor decryptor;
 
   bool crack(const Dictionary &dict, const vector<vector<int> > &codes,
              vector<vector<int> >::iterator it) {
@@ -69,7 +67,7 @@ namespace cipher {
   }
 
   vector<string> CodeBreaker::_solve(const vector<string> &ciphers) {
-    decryptor = data::Decryptor();
+    decryptor = detail::Decryptor();
     // parse ciphers => a ciphertext word == a vector of int
     vector<vector<int>> codes;
     transform(begin(ciphers), end(ciphers), back_inserter(codes), [](string cipher) {
@@ -81,7 +79,7 @@ namespace cipher {
         return move(numbers);
       });
 
-    for (Dictionary dict : data::dictionaries) {
+    for (Dictionary dict : dictionaries) {
       vector<vector<int> > copied(codes);
       for (auto numbers : copied) {
         // this dictionary doesn't contain any word of that size, skip

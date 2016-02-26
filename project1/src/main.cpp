@@ -1,9 +1,10 @@
+#include "setup.hpp"
 #include "CodeBreaker.hpp"
 using namespace std;
+using namespace cipher;
 
-int main(void) {
+int main(int, char **argv) {
   string input;
   getline(cin, input);
-  cout << '\'' << input << '\'' << endl;
-  cout << cipher::CodeBreaker().solve(input) << endl;
+  cout << cipher::CodeBreaker(basename(argv[0]) + "/plaintext_dictionary.txt").solve(input) << endl;
 }

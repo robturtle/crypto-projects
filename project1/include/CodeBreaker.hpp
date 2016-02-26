@@ -6,9 +6,12 @@
 
 namespace cipher {
 
-  class CodeBreakerBase {
+  class CodeBreaker {
 
   public:
+    CodeBreaker(const std::string &path): dictionaries(analyze_dictionaries(path)) {}
+    CodeBreaker(): CodeBreaker(RESOURCE("plaintext_dictionary.txt")) {}
+
     std::string solve(std::string ciphertext) {
       words ciphers = split(ciphertext);
       words plains = _solve(ciphers);
@@ -16,14 +19,10 @@ namespace cipher {
     }
 
   protected:
-    virtual words _solve(const words &ciphers) = 0;
+    virtual words _solve(const words &ciphers);
 
-  }; /* CodeBreakerBase */
+    std::vector<Dictionary> dictionaries;
 
-
-  class CodeBreaker: public CodeBreakerBase {
-  protected:
-    words _solve(const words &ciphers) override;
   }; /* CodeBreaker */
 
 

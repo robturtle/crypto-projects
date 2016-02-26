@@ -24,6 +24,12 @@ namespace cipher {
   }
 
 
+  string basename(const string &path) {
+    size_t pos = path.find_last_of('/');
+    return path.substr(0, pos);
+  }
+
+
   vector<vector<string>> load_dictionaries(const string &path) {
     ifstream file(path);
     vector<vector<string>> dicts;

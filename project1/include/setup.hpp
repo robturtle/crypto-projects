@@ -21,6 +21,7 @@ namespace cipher {
     return move(out.str());
   }
 
+  extern std::string basename(const std::string &path);
   extern std::vector<words> load_dictionaries(const std::string &path);
 
   // group words by its length
