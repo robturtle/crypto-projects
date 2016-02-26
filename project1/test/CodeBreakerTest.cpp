@@ -20,8 +20,8 @@ static vector<vector<string>> plaintext_sets = load_dictionaries(RESOURCE("plain
 /********************************************************************************
  * Generator of ciphertext
  ********************************************************************************/
-static const size_t WORD_NUM_MIN = 5;
-static const size_t WORD_NUM_MAX = 50;
+static const size_t WORD_NUM_MIN = 200;
+static const size_t WORD_NUM_MAX = 200;
 
 struct PlaintextGenerator {
   vector<string> unGen(RngEngine &rng, size_t) {
