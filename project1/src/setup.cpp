@@ -26,8 +26,8 @@ namespace cipher {
 
   vector<vector<string>> load_dictionaries(const string &path) {
     ifstream file(path);
-    vector<vector<string>> dictionaries;
-    if (!file.is_open()) {return dictionaries;}
+    vector<vector<string>> dicts;
+    if (!file.is_open()) {return dicts;}
 
     string line;
     while (getline(file, line)) {
@@ -36,9 +36,9 @@ namespace cipher {
       if (NO == 0) continue;
 
       getline(file, line);
-      dictionaries.push_back(split(line));
+      dicts.push_back(split(line));
     }
-    return move(dictionaries);
+    return move(dicts);
   }
 
   // this function only split a single dictionary
@@ -123,7 +123,8 @@ namespace cipher {
       });
     map<size_t, int> priority;
     int size = word_lengthes.size();
-    for (int i = 0; i < size; i++) priority[word_lengthes[i]] = i;
+    // priority[x] = 0 means non existed
+    for (int i = 1; i <= size; i++) priority[word_lengthes[i-1]] = i;
     return Dictionary(move(dict_map), move(priority));
   }
 
