@@ -1,5 +1,6 @@
 #ifndef CRYPTO_PROJECT_1_YANG_LIU_SCHEDULER_0412
 #define CRYPTO_PROJECT_1_YANG_LIU_SCHEDULER_0412
+#include "setup.hpp"
 #include "Key.hpp"
 #include <random>
 #include <vector>
@@ -32,6 +33,18 @@ namespace cipher {
         ciphercode.push_back(schedule(c, k, pos++, plaintext.size()));
       }
       return std::move(ciphercode);
+    }
+
+    std::string encode(const std::string &plaintext, const Key &k) const {
+      return join(enc(plaintext, k), ",");
+    }
+
+    std::string encode(const std::vector<std::string> &words, const Key &k) const {
+      std::vector<std::string> ciphers;
+      std::transform(words.begin(), words.end(), std::back_inserter(ciphers), [&](const std::string &word) {
+          return encode(word, k);
+        });
+      return join(ciphers);
     }
 
     std::string dec(const std::vector<int> &ciphercode, const Key &k) const {
