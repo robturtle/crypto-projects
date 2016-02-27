@@ -17,30 +17,31 @@ template <typename T>
 ostream& operator<<(ostream &o, const Data<T> &e)
 {o << e._v; return o;}
 
-// must provide a random variable generator unGen
-// and a shrinking vector generator shrink
-template <typename T>
-struct ArbitraryImpl<Data<T>>
-{
-  static const typename Arbitrary<Data<T>>::unGenType unGen;
-  static const typename Arbitrary<Data<T>>::shrinkType shrink;
-};
+namespace cppqc { // wrap in cppqc or otherwise not compiled with g++
+  // must provide a random variable generator unGen
+  // and a shrinking vector generator shrink
+  template <typename T>
+  struct ArbitraryImpl<Data<T>>
+  {
+    static const typename Arbitrary<Data<T>>::unGenType unGen;
+    static const typename Arbitrary<Data<T>>::shrinkType shrink;
+  };
 
-// RngEngine: random generator engine
-// size: bound of the domain
-template <typename T>
-const typename Arbitrary<Data<T>>::unGenType ArbitraryImpl<Data<T>>::unGen = [](RngEngine &, size_t) {
-  return Data<T>(T());
-};
+  // RngEngine: random generator engine
+  // size: bound of the domain
+  template <typename T>
+  const typename Arbitrary<Data<T>>::unGenType ArbitraryImpl<Data<T>>::unGen = [](RngEngine &, size_t) {
+    return Data<T>(T());
+  };
 
-// make violated sample size smaller
-// should have trivial case or otherwise will cause infinite loop
-template <typename T>
-const typename Arbitrary<Data<T>>::shrinkType ArbitraryImpl<Data<T>>::shrink = [](Data<T>) {
-  vector<Data<T>> ret {};
-  return ret;
-};
-
+  // make violated sample size smaller
+  // should have trivial case or otherwise will cause infinite loop
+  template <typename T>
+  const typename Arbitrary<Data<T>>::shrinkType ArbitraryImpl<Data<T>>::shrink = [](Data<T>) {
+    vector<Data<T>> ret {};
+    return ret;
+  };
+}
 
 // original quick check
 struct AxA_isGreaterThan_A : Property<Data<int>, Data<int>>
