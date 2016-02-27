@@ -29,7 +29,11 @@ struct PropTestSort: cppqc::Property<std::vector<int>>
   {return "Sorting should be sorted";}
 
   std::string classify(const std::vector<int> &v) const override
-  {return (std::ostringstream() << "size " << v.size()).str();}
+  {
+    std::ostringstream out;
+    out << "size " << v.size();
+    return out.str();
+  }
 
   bool trivial(const std::vector<int> &v) const override
   {return v.empty() || v.size() == 1;}
