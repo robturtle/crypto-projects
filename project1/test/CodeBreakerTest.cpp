@@ -27,7 +27,6 @@ struct PlaintextGenerator {
   vector<string> unGen(RngEngine &rng, size_t) {
     vector<string> words;
     vector<string> dictionary = random_take(plaintext_sets, rng);
-    cout << "Choosing dictionary of " << dictionary[0] << endl;
     size_t word_num = boost::uniform_int<size_t>(WORD_NUM_MIN, WORD_NUM_MAX)(rng);
     for (size_t i = 0; i < word_num; i++)
       words.push_back(random_take(dictionary, rng));
@@ -66,20 +65,22 @@ struct Correctness: CipherProperty {
     vector<string> ciphers;
     for (string w : words) ciphers.push_back(join(s.enc(w, k), ","));
     string ciphertext = join(ciphers);
-    cout << endl << "ciphertext: " << ciphertext << endl;
 
     auto start = clock();
     string inverted = CodeBreaker().solve(ciphertext);
     auto end = clock();
-    cout << endl << "inverted: " << inverted << endl;
 
     string plaintext = join(words);
     bool correct = inverted == plaintext;
 
     // logging for further analysis
-    if (correct) ofstream(RESOURCE("break.log"), ios_base::app) << (end - start)/CLOCKS_PER_SEC << ','
-                                                                << plaintext << ','
-                                                                << s.name << endl;
+    if (correct) {
+      ofstream(RESOURCE("break.log"), ios_base::app) << (end - start) * 1000 /CLOCKS_PER_SEC << ','
+                                                     << plaintext << endl;
+    } else {
+      cout << endl << "ciphertext: " << ciphertext << endl;
+      cout << endl << "inverted: " << inverted << endl;
+    }
 
     return correct;
   }
