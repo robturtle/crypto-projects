@@ -7,6 +7,8 @@ using namespace cipher;
 
 int main(int, char**) {
 
+  default_random_engine engine(random_device{}());
+
   vector<words> dictionaries = load_dictionaries(RESOURCE("plaintext_dictionary.txt"));
   size_t dict_idx = uniform_int_distribution<size_t>(0, dictionaries.size() - 1)(engine);
   const words &dict = dictionaries[dict_idx];

@@ -69,6 +69,7 @@ namespace cipher {
 
   static Scheduler uniform("Uniform", [](char c, const Key& k, int, int) {
       std::uniform_int_distribution<int> uni(0, slot_of(c) - 1);
+      std::default_random_engine engine(std::random_device{}());
       return k.code(c, uni(engine));
     });
 

@@ -71,6 +71,7 @@ struct KeyInvertCodeToCharCorrectly: Property<Key, char> {
 
   bool check(const Key &k, const char &c) const override {
     std::uniform_int_distribution<int> uni(0, slot_of(c) - 1);
+    std::default_random_engine engine(std::random_device{}());
     int rand_index = uni(engine);
     return c == k.plain(k.code(c, rand_index));
   }

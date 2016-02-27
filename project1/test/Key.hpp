@@ -1,7 +1,6 @@
 #ifndef CRYPTO_PROJECT_1_KEY_YANG_LIU_0738
 #define CRYPTO_PROJECT_1_KEY_YANG_LIU_0738
 #include "key_basic.hpp"
-#include "rand_gen.hpp"
 #include "testing.hpp"
 #include <array>
 #include <boost/assert.hpp>
@@ -46,6 +45,7 @@ namespace cipher {
     Key(const std::array<int, KEY_LEN> &permutation):_permutation(permutation) {}
 
     Key() {
+      std::default_random_engine engine(std::random_device{}());
       std::array<int, KEY_LEN> copied = codes;
       std::shuffle(std::begin(copied), std::end(copied), engine);
       _permutation = std::move(copied);
