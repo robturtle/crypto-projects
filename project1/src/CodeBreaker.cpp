@@ -38,7 +38,7 @@ namespace cipher {
         }
       }
 
-      string dec(vector<int> codes) {
+      string dec(const vector<int> &codes) {
         ostringstream out;
         for (int k : codes) out << invert_key[k];
         return out.str();
