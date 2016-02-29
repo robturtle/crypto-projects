@@ -1,6 +1,7 @@
 cmake_minimum_required (VERSION 3.0)
 project (CryptoProject1)
 set (CMAKE_CXX_FLAGS "-std=c++11")
+set (CMAKE_CXX_FLAGS_DEBUG "-Wall")
 set (CMAKE_CXX_FLAGS_RELEASE "-O3")
 # for CppQuickcheck
 set (CMAKE_MACOSX_RPATH 1)

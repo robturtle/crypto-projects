@@ -32,7 +32,7 @@ namespace cipher {
       6 /* s */, 9 /* t */, 3 /* u */, 1 /* v */, 2 /* w */, 1 /* x */,
       2 /* y */, 1 /* z */,
   };
-  static int slot_of(char c) {return slots[c-alpha];};
+  inline int slot_of(char c) {return slots[c-alpha];};
 
   /// start index of a letter within the whole array
   // Ex: base['b' - 'a'] = 8; base['c' - 'a'] = 9
