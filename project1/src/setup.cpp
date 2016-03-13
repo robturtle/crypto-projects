@@ -161,7 +161,6 @@ namespace cipher {
 
   void load_dicts(const std::string &path, std::vector<Dictionary> &dicts) {
     ifstream in(path);
-    // archive::text_iarchive ia(in);
     archive::text_iarchive ia(in);
     ia & dicts;
   }

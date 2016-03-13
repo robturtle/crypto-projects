@@ -19,9 +19,12 @@ int main(int argc, char**argv) {
   }
 
   auto uni = uniform_int_distribution<size_t>(0, dict.size() - 1);
-  const size_t word_num = 100;
+  const size_t CHAR_NUM_MAX = 500;
+  size_t char_num = 0;
   vector<string> words;
-  for (size_t i = 0; i < word_num; i++) {
+  while (char_num < CHAR_NUM_MAX) {
+    string word = dict[uni(engine)];
+    char_num += word.length();
     words.push_back(dict[uni(engine)]);
   }
 
