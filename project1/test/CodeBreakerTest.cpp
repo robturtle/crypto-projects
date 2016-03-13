@@ -34,15 +34,6 @@ struct PlaintextGenerator {
   }
 
   vector<vector<string>> shrink(vector<string> /*words*/) {
-    /*
-    vector<vector<string>> shrinks;
-    for (size_t size = words.size() / 2; size >= WORD_NUM_MIN; size /= 2) {
-      vector<string> shrink(size);
-      copy(words.begin(), words.begin() + size, back_inserter(shrink));
-      shrinks.push_back(shrink);
-    }
-    return shrinks;
-    */
     return vector<vector<string>>();
   }
 };
@@ -61,13 +52,19 @@ struct CipherProperty: Property<Scheduler, Key, vector<string>> {
 
 // Dec(Enc(plaintext)) = plaintext
 struct Correctness: CipherProperty {
+  vector<Dictionary> dicts;
+
+  Correctness() {
+    load_dicts(RESOURCE("../src/dictionaries.txt"), dicts);
+  }
+
   bool check(const Scheduler &s, const Key &k, const vector<string> &words) const override {
     vector<string> ciphers;
     for (string w : words) ciphers.push_back(join(s.enc(w, k), ","));
     string ciphertext = join(ciphers);
 
     auto start = clock();
-    string inverted = CodeBreaker().solve(ciphertext);
+    string inverted = CodeBreaker().solve(ciphertext, dicts);
     auto end = clock();
 
     string plaintext = join(words);
@@ -87,3 +84,26 @@ struct Correctness: CipherProperty {
   }
 };
 RUN_QUICK_CHECK(CodeBreakTest, Correctness)
+
+struct EnglishWordPicker {
+  vector<string> unGen(RngEngine &rng, size_t) {
+    vector<string> words;
+    vector<string> english_words = load_english_words(RESOURCE());
+    size_t word_num = boost::uniform_int<size_t>(WORD_NUM_MIN, WORD_NUM_MAX)(rng);
+    for (size_t i = 0; i < word_num; i++)
+      words.push_back(random_take(english_words, rng));
+    return move(words);
+  }
+
+  vector<vector<string>> shrink(vector<string>) {
+    return vector<vector<string>>();
+  }
+};
+
+struct EnglishDictionary: public Correctness {
+  EnglishDictionary() {
+    plaintext_sets.clear();
+    plaintext_sets.push_back(load_english_words(RESOURCE()));
+  }
+};
+RUN_QUICK_CHECK(CodeBreakTest, EnglishDictionary)
