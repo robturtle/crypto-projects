@@ -67,6 +67,17 @@ namespace cipher {
     return false;
   }
 
+  inline unsigned long long choose(unsigned long long from, unsigned long long pick) {
+    if (pick > from) pick = from;
+    else if (pick > from / 2) pick = from - pick;
+    unsigned long long count = 1;
+    for (unsigned int i = 0, multiple = from; i < pick; i++, multiple--)
+      count *= multiple;
+    for (unsigned int i = pick; i > 1; i--)
+      count /= i;
+    return count;
+  }
+
   vector<string> CodeBreaker::_solve(const vector<string> &ciphers, const vector<Dictionary> &dictionaries) {
     decryptor = detail::Decryptor();
     // parse ciphers => a ciphertext word == a vector of int
@@ -96,8 +107,8 @@ namespace cipher {
       }
 
       sort(begin(word_lengthes), end(word_lengthes), [&](size_t a, size_t b) {
-          auto ca = pow(dict.dict_map[a].size(), a);
-          auto cb = pow(dict.dict_map[b].size(), b);
+          auto ca = choose(dict.dict_map[a].size(), a);
+          auto cb = choose(dict.dict_map[b].size(), b);
           if (ca == cb) {
             return dict.priority[a] < dict.priority[b];
           } else {
