@@ -77,8 +77,14 @@ struct Correctness: CipherProperty {
     // logging for further analysis
     if (correct) {
       // in microseconds
-      ofstream(RESOURCE("break.log"), ios_base::app) << (end - start) * 1000000 /CLOCKS_PER_SEC << ','
-                                                     << plaintext << endl;
+      ofstream log(RESOURCE("break.log"), ios_base::app);
+
+      cout << "crack in " << (end - start) / CLOCKS_PER_SEC << " seconds" << endl;
+      cout.flush();
+
+      log << (end - start) * 1000000 /CLOCKS_PER_SEC << ','
+          << plaintext << endl;
+      log.flush();
     } else {
       cout << endl << "ciphertext: " << ciphertext << endl;
       cout << endl << "inverted: " << inverted << endl;
