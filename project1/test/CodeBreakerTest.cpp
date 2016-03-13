@@ -21,8 +21,6 @@ static vector<vector<string>> plaintext_sets = load_dictionaries(RESOURCE("plain
 /********************************************************************************
  * Generator of ciphertext
  ********************************************************************************/
-static const size_t WORD_NUM_MIN = 80;
-static const size_t WORD_NUM_MAX = 100;
 
 struct PlaintextGenerator {
   vector<string> unGen(RngEngine &rng, size_t) {
@@ -92,33 +90,12 @@ struct Correctness: CipherProperty {
 };
 RUN_QUICK_CHECK(CodeBreakTest, Correctness)
 
-struct EnglishWordPicker {
-  vector<string> unGen(RngEngine &rng, size_t) {
-    vector<string> words;
-    vector<string> english_words = load_english_words(RESOURCE());
-    const size_t CHAR_NUM_MAX = 500;
-    size_t char_num =0;
-    while (char_num < CHAR_NUM_MAX) {
-      string word = random_take(english_words, rng);
-      char_num += word.length();
-      words.push_back(word);
-    }
-    return move(words);
-  }
-
-  vector<vector<string>> shrink(vector<string>) {
-    return vector<vector<string>>();
-  }
-};
-
 struct EnglishDictionary: public Correctness {
 
   EnglishDictionary() {
     plaintext_sets.clear();
     plaintext_sets.push_back(load_english_words(RESOURCE()));
   }
-
-  bool expect() const override {return false;}
 
   bool check(const Scheduler &s, const Key &k, const vector<string> &words) const override {
     vector<string> ciphers;
@@ -131,14 +108,13 @@ struct EnglishDictionary: public Correctness {
         return breaker.solve(ciphertext, dicts);
       });
 
-    future_status status;
     bool correct = false;
-    auto start = clock();
     ofstream log(RESOURCE("english.log"));
     string plaintext = join(words);
     const size_t TIME_LIMIT = 120;
 
-    status = future_receive.wait_for(chrono::seconds(TIME_LIMIT));
+    auto start = clock();
+    auto status = future_receive.wait_for(chrono::seconds(TIME_LIMIT));
     if (status == future_status::timeout) {
       breaker.stop = true;
       cout << "Timeout! abort." << endl;
@@ -156,7 +132,4 @@ struct EnglishDictionary: public Correctness {
   }
 
 };
-
-TEST(CodeBreakTest, EnglishDictionary) {
-  EXPECT_EQ(cppqc::QC_SUCCESS, cppqc::quickCheckOutput(EnglishDictionary()).result);
-}
+RUN_QUICK_CHECK(CodeBreakTest, EnglishDictionary)
