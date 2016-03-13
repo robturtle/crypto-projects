@@ -20,7 +20,7 @@ int main(void) {
   }
 
   cout << endl << "Analyzing dictionaries..." << endl;
-  vector<Dictionary> dicts = analyze_dictionaries(RESOURCE("plaintext_dictionary.txt"));
+  vector<Dictionary> dicts = analyze_dictionaries(RESOURCE());
   size_t dict_no = 1;
   for (Dictionary dict : dicts) {
     cout << "Dictionary #" << dict_no++ << endl;

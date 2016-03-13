@@ -66,7 +66,7 @@ namespace cipher {
     return false;
   }
 
-  vector<string> CodeBreaker::_solve(const vector<string> &ciphers) {
+  vector<string> CodeBreaker::_solve(const vector<string> &ciphers, const vector<Dictionary> &dictionaries) {
     decryptor = detail::Decryptor();
     // parse ciphers => a ciphertext word == a vector of int
     vector<vector<int>> codes;

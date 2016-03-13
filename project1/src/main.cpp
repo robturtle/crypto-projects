@@ -1,10 +1,15 @@
+#include <fstream>
 #include "setup.hpp"
 #include "CodeBreaker.hpp"
 using namespace std;
 using namespace cipher;
+using namespace boost;
 
 int main(int, char **argv) {
+  vector<Dictionary> dicts;
+  load_dicts(basename(argv[0]) + "/english_words.txt", dicts);
+
   string input;
   getline(cin, input);
-  cout << cipher::CodeBreaker(basename(argv[0]) + "/plaintext_dictionary.txt").solve(input) << endl;
+  cout << cipher::CodeBreaker().solve(input, dicts) << endl;
 }

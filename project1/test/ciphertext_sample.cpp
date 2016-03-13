@@ -5,13 +5,18 @@
 using namespace std;
 using namespace cipher;
 
-int main(int, char**) {
+int main(int argc, char**argv) {
 
   default_random_engine engine(random_device{}());
 
   vector<words> dictionaries = load_dictionaries(RESOURCE("plaintext_dictionary.txt"));
-  size_t dict_idx = uniform_int_distribution<size_t>(0, dictionaries.size() - 1)(engine);
-  const words &dict = dictionaries[dict_idx];
+  words dict;
+  if (argc > 1 && string(argv[1]) == "english") {
+    dict = load_english_words(RESOURCE());
+  } else {
+    size_t dict_idx = uniform_int_distribution<size_t>(0, dictionaries.size() - 1)(engine);
+    dict = dictionaries[dict_idx];
+  }
 
   auto uni = uniform_int_distribution<size_t>(0, dict.size() - 1);
   const size_t word_num = 100;

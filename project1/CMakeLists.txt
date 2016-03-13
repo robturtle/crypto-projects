@@ -11,6 +11,7 @@ set (CMAKE_MACOSX_RPATH 1)
 ################################################################################
 file (COPY resources DESTINATION ${PROJECT_BINARY_DIR})
 file (COPY "resources/plaintext_dictionary.txt" DESTINATION ${PROJECT_BINARY_DIR}/src)
+file (COPY "resources/english_words.txt" DESTINATION ${PROJECT_BINARY_DIR}/src)
 set (RESOURCE_PATH "\"${PROJECT_BINARY_DIR}/resources/\"")
 configure_file (
   ${PROJECT_SOURCE_DIR}/include/config.hpp.in
@@ -24,6 +25,7 @@ include_directories (${PROJECT_BINARY_DIR}/include)
 ################################################################################
 set (BOOST_ROOT ${PROJECT_SOURCE_DIR}/lib)
 include_directories (${PROJECT_SOURCE_DIR}/lib)
+#find_package(Boost 1.59 REQUIRED system serialization)
 
 include_directories (${PROJECT_SOURCE_DIR}/include ${PROJECT_SOURCE_DIR})
 add_subdirectory (src)

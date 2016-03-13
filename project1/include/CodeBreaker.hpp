@@ -9,19 +9,15 @@ namespace cipher {
   class CodeBreaker {
 
   public:
-    CodeBreaker(const std::string &path): dictionaries(analyze_dictionaries(path)) {}
-    CodeBreaker(): CodeBreaker(RESOURCE("plaintext_dictionary.txt")) {}
 
-    std::string solve(std::string ciphertext) {
+    std::string solve(std::string ciphertext, const std::vector<Dictionary> &dicts) {
       words ciphers = split(ciphertext);
-      words plains = _solve(ciphers);
+      words plains = _solve(ciphers, dicts);
       return join(plains);
     }
 
   protected:
-    virtual words _solve(const words &ciphers);
-
-    std::vector<Dictionary> dictionaries;
+    virtual words _solve(const words &ciphers, const std::vector<Dictionary> & dicts);
 
   }; /* CodeBreaker */
 

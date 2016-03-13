@@ -7,7 +7,12 @@
 #include <iterator>
 #include <iostream>
 #include <map>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/serialization/map.hpp>
+#include <boost/serialization/vector.hpp>
+#include <boost/serialization/string.hpp>
 using namespace std;
+using namespace boost;
 
 namespace cipher {
 
@@ -97,7 +102,7 @@ namespace cipher {
     return sum;
   }
 
-  map<string, unsigned long long> fault_tolerances;
+  map<string, double> fault_tolerances;
 
   Dictionary analyze_dictionary(const words &dictionary) {
     map<size_t, words> dict_map;
@@ -134,12 +139,30 @@ namespace cipher {
     return Dictionary(move(dict_map), move(priority));
   }
 
+  words load_english_words(const string &path) {
+    const string ENGLISH_DICT = "/english_words.txt";
+    ifstream in(path + ENGLISH_DICT);
+    words english_words;
+    copy(istream_iterator<string>(in),
+         istream_iterator<string>(),
+         back_inserter(english_words));
+    return move(english_words);
+ }
+
   // this function combine them all
   vector<Dictionary> analyze_dictionaries(const string &path) {
+    const string SMALL_DICTS = "/plaintext_dictionary.txt";
     vector<Dictionary> maps;
-    vector<words> dictionaries = load_dictionaries(path);
+    vector<words> dictionaries = load_dictionaries(path + SMALL_DICTS);
     for (const words &dict : dictionaries) maps.push_back(analyze_dictionary(dict));
+    maps.push_back(analyze_dictionary(load_english_words(path)));
     return move(maps);
   }
 
+  void load_dicts(const std::string &path, std::vector<Dictionary> &dicts) {
+    ifstream in(path);
+    // archive::text_iarchive ia(in);
+    archive::text_iarchive ia(in);
+    ia & dicts;
+  }
 } /* cipher */

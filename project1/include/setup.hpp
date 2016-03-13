@@ -4,6 +4,8 @@
 #include <string>
 #include <sstream>
 #include <map>
+#include <boost/serialization/map.hpp>
+#include <boost/serialization/vector.hpp>
 
 namespace cipher {
   using words = std::vector<std::string>;
@@ -27,16 +29,24 @@ namespace cipher {
   // group words by its length
   // and provide information of priority
   struct Dictionary {
-    Dictionary(std::map<std::size_t, words> dict_map, std::map<std::size_t, int> priority)
+    Dictionary() {}
+    Dictionary(const std::map<std::size_t, words> &dict_map, const std::map<std::size_t, int> &priority)
       : dict_map(dict_map), priority(priority) {}
     std::map<std::size_t, words> dict_map;
     // priority[x] = 0 means non existed
     std::map<std::size_t, int> priority; // word length => priority, the smaller value, the higher priority
+
+    template <typename Archive>
+    void serialize(Archive& archive, const unsigned int) {
+      archive & dict_map;
+      archive & priority;
+    }
   }; /* Dictionary */
 
-  extern std::map<std::string, unsigned long long> fault_tolerances;
   extern Dictionary analyze_dictionary(const words &dictionary);
   extern std::vector<Dictionary> analyze_dictionaries(const std::string &path);
+  extern void load_dicts(const std::string &path, std::vector<Dictionary> &dicts);
+  extern words load_english_words(const std::string &path);
 
 } /* cipher */
 
