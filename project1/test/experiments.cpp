@@ -63,7 +63,7 @@ float count_time_in_sec(const words &vocabulary, size_t word_num = 100) {
   for (size_t i = 0; i < word_num; i++) plains.push_back(pick(vocabulary));
   string ciphertext = uniform.encode(plains, Key());
   clock_t start = clock();
-  CodeBreaker().solve(ciphertext);
+  //CodeBreaker().solve(ciphertext);
   clock_t end = clock();
   return ((float)(end - start) / CLOCKS_PER_SEC);
 }
