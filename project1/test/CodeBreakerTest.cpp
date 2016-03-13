@@ -27,9 +27,13 @@ struct PlaintextGenerator {
   vector<string> unGen(RngEngine &rng, size_t) {
     vector<string> words;
     vector<string> dictionary = random_take(plaintext_sets, rng);
-    size_t word_num = boost::uniform_int<size_t>(WORD_NUM_MIN, WORD_NUM_MAX)(rng);
-    for (size_t i = 0; i < word_num; i++)
-      words.push_back(random_take(dictionary, rng));
+    const size_t CHAR_NUM_MAX = 500;
+    size_t char_num =0;
+    while (char_num < CHAR_NUM_MAX) {
+      string word = random_take(dictionary, rng);
+      char_num += word.length();
+      words.push_back(word);
+    }
     return move(words);
   }
 
@@ -89,9 +93,13 @@ struct EnglishWordPicker {
   vector<string> unGen(RngEngine &rng, size_t) {
     vector<string> words;
     vector<string> english_words = load_english_words(RESOURCE());
-    size_t word_num = boost::uniform_int<size_t>(WORD_NUM_MIN, WORD_NUM_MAX)(rng);
-    for (size_t i = 0; i < word_num; i++)
-      words.push_back(random_take(english_words, rng));
+    const size_t CHAR_NUM_MAX = 500;
+    size_t char_num =0;
+    while (char_num < CHAR_NUM_MAX) {
+      string word = random_take(english_words, rng);
+      char_num += word.length();
+      words.push_back(word);
+    }
     return move(words);
   }
 
