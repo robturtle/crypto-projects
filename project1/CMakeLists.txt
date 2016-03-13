@@ -23,9 +23,9 @@ include_directories (${PROJECT_BINARY_DIR}/include)
 ################################################################################
 # Main
 ################################################################################
-set (BOOST_ROOT ${PROJECT_SOURCE_DIR}/lib)
-include_directories (${PROJECT_SOURCE_DIR}/lib)
-#find_package(Boost 1.59 REQUIRED system serialization)
+#set (BOOST_ROOT ${PROJECT_SOURCE_DIR}/lib)
+#include_directories (${PROJECT_SOURCE_DIR}/lib)
+find_package(Boost REQUIRED system serialization)
 
 include_directories (${PROJECT_SOURCE_DIR}/include ${PROJECT_SOURCE_DIR})
 add_subdirectory (src)
