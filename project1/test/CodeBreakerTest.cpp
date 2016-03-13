@@ -7,6 +7,7 @@
 #include <iostream>
 #include <ctime>
 #include <fstream>
+#include <future>
 using namespace std;
 using namespace cppqc;
 using namespace cipher;
@@ -77,11 +78,7 @@ struct Correctness: CipherProperty {
     // logging for further analysis
     if (correct) {
       // in microseconds
-      ofstream log(RESOURCE("break.log"), ios_base::app);
-
-      cout << "crack in " << (end - start) / CLOCKS_PER_SEC << " seconds" << endl;
-      cout.flush();
-
+      ofstream log(RESOURCE("break.log"));
       log << (end - start) * 1000000 /CLOCKS_PER_SEC << ','
           << plaintext << endl;
       log.flush();
@@ -115,9 +112,51 @@ struct EnglishWordPicker {
 };
 
 struct EnglishDictionary: public Correctness {
+
   EnglishDictionary() {
     plaintext_sets.clear();
     plaintext_sets.push_back(load_english_words(RESOURCE()));
   }
+
+  bool expect() const override {return false;}
+
+  bool check(const Scheduler &s, const Key &k, const vector<string> &words) const override {
+    vector<string> ciphers;
+    for (string w : words) ciphers.push_back(join(s.enc(w, k), ","));
+    string ciphertext = join(ciphers);
+
+    atomic<bool> stop{false};
+    CodeBreaker breaker;
+    auto future_receive = async([&]() {
+        return breaker.solve(ciphertext, dicts);
+      });
+
+    future_status status;
+    bool correct = false;
+    auto start = clock();
+    ofstream log(RESOURCE("english.log"));
+    string plaintext = join(words);
+    const size_t TIME_LIMIT = 120;
+
+    status = future_receive.wait_for(chrono::seconds(TIME_LIMIT));
+    if (status == future_status::timeout) {
+      breaker.stop = true;
+      cout << "Timeout! abort." << endl;
+      log << TIME_LIMIT << "," << plaintext << endl;
+    } else if (status == future_status::ready) {
+      auto end = clock();
+      correct = future_receive.get() == plaintext;
+      if (correct) {
+        cout << "crack in " << (end - start) / CLOCKS_PER_SEC << " seconds " << endl;
+        log << (end - start) / CLOCKS_PER_SEC << "," << plaintext << endl;
+        log.flush();
+      }
+    }
+    return true; // always move on even fail
+  }
+
 };
-RUN_QUICK_CHECK(CodeBreakTest, EnglishDictionary)
+
+TEST(CodeBreakTest, EnglishDictionary) {
+  EXPECT_EQ(cppqc::QC_SUCCESS, cppqc::quickCheckOutput(EnglishDictionary()).result);
+}
