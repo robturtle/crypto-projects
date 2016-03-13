@@ -107,8 +107,8 @@ namespace cipher {
       }
 
       sort(begin(word_lengthes), end(word_lengthes), [&](size_t a, size_t b) {
-          auto ca = choose(dict.dict_map[a].size(), a);
-          auto cb = choose(dict.dict_map[b].size(), b);
+          auto ca = a * choose(dict.dict_map[a].size(), a);
+          auto cb = b * choose(dict.dict_map[b].size(), b);
           if (ca == cb) {
             return dict.priority[a] < dict.priority[b];
           } else {
