@@ -49,8 +49,9 @@ namespace cipher {
   } /* detail */
   detail::Decryptor decryptor;
 
-  bool crack(const Dictionary &dict, const vector<vector<int> > &codes,
+  bool CodeBreaker::crack(const Dictionary &dict, const vector<vector<int> > &codes,
              vector<vector<int> >::iterator it) {
+    if (stop) return false;
     if (it == codes.end()) return true;
     const vector<int> &numbers = *it;
     size_t size = numbers.size();
@@ -70,24 +71,44 @@ namespace cipher {
     decryptor = detail::Decryptor();
     // parse ciphers => a ciphertext word == a vector of int
     vector<vector<int>> codes;
-    transform(begin(ciphers), end(ciphers), back_inserter(codes), [](string cipher) {
-        vector<int> numbers;
-        vector<string> num_strs = split(cipher, ",");
-        transform(begin(num_strs), end(num_strs), back_inserter(numbers), [](string num_str) {
-            return atoi(num_str.c_str());
-          });
-        return move(numbers);
-      });
+    map<size_t, vector<vector<int>>> codes_by_word_length;
+    map<size_t, size_t> num_of_word_length;
+    vector<size_t> word_lengthes;
+    for (string strings : ciphers) {
+      vector<int> numbers;
+      vector<string> num_strs = split(strings, ",");
+      transform(begin(num_strs), end(num_strs), back_inserter(numbers), [](string num_str) {
+          return atoi(num_str.c_str());
+        });
+      size_t sz = numbers.size();
+      codes_by_word_length[sz].push_back(numbers);
+      codes.push_back(numbers);
+      if (num_of_word_length[sz] == 0) word_lengthes.push_back(sz);
+      num_of_word_length[sz] += 1;
+    }
 
     for (Dictionary dict : dictionaries) {
-      vector<vector<int> > copied(codes);
-      for (auto numbers : copied) {
+      vector<vector<int>> copied;
+      copied.clear();
+      for (auto sz : word_lengthes) {
         // this dictionary doesn't contain any word of that size, skip
-        if (dict.priority[numbers.size()] == 0) goto NEXT;
+        if (dict.priority[sz] == 0) goto NEXT;
       }
-      sort(begin(copied), end(copied), [&](vector<int> a, vector<int> b) {
-          return dict.priority[a.size()] <  dict.priority[b.size()];
+
+      sort(begin(word_lengthes), end(word_lengthes), [&](size_t a, size_t b) {
+          auto ca = pow(dict.dict_map[a].size(), a);
+          auto cb = pow(dict.dict_map[b].size(), b);
+          if (ca == cb) {
+            return dict.priority[a] < dict.priority[b];
+          } else {
+            return ca < cb;
+          }
         });
+
+      for (size_t sz : word_lengthes) {
+        copy(begin(codes_by_word_length[sz]), end(codes_by_word_length[sz]),
+             back_inserter(copied));
+      }
 
       if (crack(dict, copied, copied.begin())) break;
     NEXT: ;
