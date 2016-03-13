@@ -7,7 +7,7 @@ using namespace boost;
 
 int main(int, char **argv) {
   vector<Dictionary> dicts;
-  load_dicts(basename(argv[0]) + "/english_words.txt", dicts);
+  load_dicts(basename(argv[0]) + "/dictionaries.txt", dicts);
 
   string input;
   getline(cin, input);
