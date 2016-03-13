@@ -7,7 +7,7 @@ using namespace boost;
 
 int main(int, char **argv) {
   vector<Dictionary> dicts;
-  load_dicts(basename(argv[0]) + "/dictionaries.txt", dicts);
+  load_dicts(cipher::basename(argv[0]) + string("/dictionaries.txt"), dicts);
 
   string input;
   getline(cin, input);
