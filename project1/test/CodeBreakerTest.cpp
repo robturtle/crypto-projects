@@ -109,7 +109,7 @@ struct EnglishDictionary: public Correctness {
       });
 
     bool correct = false;
-    ofstream log(RESOURCE("english.log"));
+    ofstream log(RESOURCE("english.log"), ios_base::app);
     string plaintext = join(words);
     const size_t TIME_LIMIT = 120;
 
