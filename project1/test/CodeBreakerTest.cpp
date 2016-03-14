@@ -76,7 +76,7 @@ struct Correctness: CipherProperty {
     // logging for further analysis
     if (correct) {
       // in microseconds
-      ofstream log(RESOURCE("break.log"));
+      ofstream log(RESOURCE("break.log"), ios_base::app);
       log << (end - start) * 1000000 /CLOCKS_PER_SEC << ','
           << plaintext << endl;
       log.flush();
