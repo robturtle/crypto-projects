@@ -1,5 +1,5 @@
 add_library (setup setup.cpp)
-target_link_libraries (setup boost_serialization)
+target_link_libraries (setup ${Boost_LIBRARIES})
 
 add_executable (dict_parser parse_dictionaries.cpp)
 target_link_libraries (dict_parser setup)
