@@ -105,7 +105,7 @@ struct EnglishDictionary: public Correctness {
 
     atomic<bool> stop{false};
     CodeBreaker breaker;
-    auto future_receive = async([&]() {
+    auto future_receive = async(launch::async, [&]() {
         return breaker.solve(ciphertext, dicts);
       });
 
@@ -127,6 +127,8 @@ struct EnglishDictionary: public Correctness {
         cout << "crack in " << (end - start) / CLOCKS_PER_SEC << " seconds " << endl;
         log << (end - start) / CLOCKS_PER_SEC << "," << plaintext << endl;
         log.flush();
+      } else {
+        cout << "key is ambiguous." << endl;
       }
     }
     return true; // always move on even fail
