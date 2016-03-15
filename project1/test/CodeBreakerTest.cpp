@@ -30,6 +30,7 @@ struct PlaintextGenerator {
     size_t char_num =0;
     while (char_num < CHAR_NUM_MAX) {
       string word = random_take(dictionary, rng);
+      if (word.find('\'') != string::npos) continue;
       char_num += word.length();
       words.push_back(word);
     }
