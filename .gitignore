@@ -2,3 +2,4 @@
 /.flooignore
 .DS_Store
 ltxpng/
+.idea/
