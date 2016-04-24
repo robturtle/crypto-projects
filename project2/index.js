@@ -11,7 +11,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 const Blog = mongoose.model('Blog', { title: String, contents: String });
-mongoose.connect('mongodb://localhost/blog');
+mongoose.connect('mongodb://crypto:AU2J5MekN9ze@ds019101.mlab.com:19101/playground');
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function()  { console.log('connected to mongodb'); });
