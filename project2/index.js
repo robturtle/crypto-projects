@@ -52,7 +52,6 @@ function buildHomepage(blogs) {
 
 function handleCiphertext(ciphertext, response) {
   // TODO send to decryptor, and receive output
-  // parse the output into JSON
   // TODO check integrity, if failed, response.send('integrity check failed')
   // TODO check timestamp, if too far from now, response.send('stall timestamp')
   // TODO decrypt, if illegal content, response.send('bad request')
