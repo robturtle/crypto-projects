@@ -31,7 +31,7 @@ app.get('/', function(request, response) {
   });
 });
 
-app.post('/request', function(request, response) {
+app.post('/', function(request, response) {
   var ciphertext = request.body.request;
   console.log('received request: ' + ciphertext);
   handleCiphertext(ciphertext, response);
@@ -56,6 +56,6 @@ function handleCiphertext(ciphertext, response) {
   // TODO check integrity, if failed, response.send('integrity check failed')
   // TODO check timestamp, if too far from now, response.send('stall timestamp')
   // TODO decrypt, if illegal content, response.send('bad request')
-  //               else response.send('success')
-  return ciphertext;
+  //               else do jobs according to request and response.send('success')
+  response.send('post response');
 }
