@@ -1,0 +1,28 @@
+{
+  "name": "crypto-project-2",
+  "version": "1.0.0",
+  "description": "A simple blog system to demonstrate a security schema",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/robturtle/crypto-projects.git"
+  },
+  "keywords": [
+    "crypto",
+    "demo"
+  ],
+  "author": "Yang Liu, Elon Xie, Patrick Gryczka",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/robturtle/crypto-projects/issues"
+  },
+  "homepage": "https://github.com/robturtle/crypto-projects#readme",
+  "dependencies": {
+    "body-parser": "^1.15.0",
+    "express": "^4.13.4",
+    "mongoose": "^4.4.13"
+  }
+}

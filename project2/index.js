@@ -1,0 +1,61 @@
+/* jslint esversion: 6 */
+/********************************************************************************
+ * Basic settings
+ ********************************************************************************/
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+const express = require('express');
+
+const app = express();
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
+const Blog = mongoose.model('Blog', { title: String, contents: String });
+mongoose.connect('mongodb://localhost/blog');
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function()  { console.log('connected to mongodb'); });
+
+const port = 3000; // TODO change to 80 when production
+app.listen(port, function() {
+  console.log('listening on ' + port);
+});
+
+/********************************************************************************
+ * Server route settings
+ ********************************************************************************/
+app.get('/', function(request, response) {
+  Blog.find((err, blogs) => {
+    if (err) return console.error(err);
+    response.send(buildHomepage(blogs));
+  });
+});
+
+app.post('/request', function(request, response) {
+  var ciphertext = request.body.request;
+  console.log('received request: ' + ciphertext);
+  handleCiphertext(ciphertext, response);
+});
+
+/********************************************************************************
+ * Helper functions
+ ********************************************************************************/
+function buildHomepage(blogs) {
+  var content = '';
+  content += '<ul>';
+  blogs.forEach(function(blog) {
+    content += '<li><strong>' + blog.title + '</strong><div>' + blog.contents + '</div></li>';
+  });
+  content += '</ul>';
+  return content;
+}
+
+function handleCiphertext(ciphertext, response) {
+  // TODO send to decryptor, and receive output
+  // parse the output into JSON
+  // TODO check integrity, if failed, response.send('integrity check failed')
+  // TODO check timestamp, if too far from now, response.send('stall timestamp')
+  // TODO decrypt, if illegal content, response.send('bad request')
+  //               else response.send('success')
+  return ciphertext;
+}
