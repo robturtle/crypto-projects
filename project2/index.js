@@ -14,26 +14,24 @@ const Blog = mongoose.model('Blog', { title: String, contents: String });
 mongoose.connect('mongodb://crypto:AU2J5MekN9ze@ds019101.mlab.com:19101/playground');
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', function()  { console.log('connected to mongodb'); });
+db.once('open', () => console.log('connected to mongodb'));
 
 const port = 3000; // TODO change to 80 when production
-app.listen(port, function() {
-  console.log('listening on ' + port);
-});
+app.listen(port, () => console.log(`listening on ${port}`));
 
 /********************************************************************************
  * Server route settings
  ********************************************************************************/
-app.get('/', function(request, response) {
+app.get('/', (request, response) => {
   Blog.find((err, blogs) => {
     if (err) return console.error(err);
     response.send(buildHomepage(blogs));
   });
 });
 
-app.post('/', function(request, response) {
+app.post('/', (request, response) => {
   var ciphertext = request.body.request;
-  console.log('received request: ' + ciphertext);
+  console.log(`received request: ${ciphertext}`);
   handleCiphertext(ciphertext, response);
 });
 
@@ -43,8 +41,8 @@ app.post('/', function(request, response) {
 function buildHomepage(blogs) {
   var content = '';
   content += '<ul>';
-  blogs.forEach(function(blog) {
-    content += '<li><strong>' + blog.title + '</strong><div>' + blog.contents + '</div></li>';
+  blogs.forEach(blog => {
+    content += `<li><strong>${blog.title}</strong><div>${blog.contents}</div></li>`;
   });
   content += '</ul>';
   return content;

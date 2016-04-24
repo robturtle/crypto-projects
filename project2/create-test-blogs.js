@@ -6,7 +6,7 @@ const Blog = mongoose.model('Blog', { title: String, contents: String });
 mongoose.connect('mongodb://crypto:AU2J5MekN9ze@ds019101.mlab.com:19101/playground');
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', function() { console.log('connected to mongodb'); });
+db.once('open', () => console.log('connected to mongodb'));
 
 Blog.count((err, count) => {
   if (count > 0) {
@@ -27,7 +27,7 @@ Blog.count((err, count) => {
     ];
 
     blogs.forEach(obj => {
-      new Blog(obj).save(function(err, blog) {
+      new Blog(obj).save((err, blog) => {
         if (err) {
           db.close();
           return console.error(err);
@@ -37,7 +37,7 @@ Blog.count((err, count) => {
     });
 
     const checkToQuit = () => {
-      Blog.count(function(err, count) {
+      Blog.count((err, count) => {
         if (count >= blogs.length) {
           console.log('finished.');
           db.close();
