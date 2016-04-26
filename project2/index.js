@@ -103,7 +103,7 @@ function handleCiphertext(ciphertext, response) {
         return response.send("delete failed: post not found");
       } else {
         docs[0].remove((err) => {
-          if (err) return response.send(420, err);
+          if (err) return response.status(500).send(err);
           else return response.send('OK');
         });
       }
