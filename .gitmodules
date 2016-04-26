@@ -1,0 +1,6 @@
+[submodule "project2/lib/curlcpp"]
+	path = project2/lib/curlcpp
+	url = https://github.com/JosephP91/curlcpp
+[submodule "project2/lib/tclap"]
+	path = project2/lib/tclap
+	url = https://github.com/eile/tclap
