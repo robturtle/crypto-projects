@@ -1,7 +1,10 @@
 /* jslint esversion: 6 */
 const mongoose = require('mongoose');
 
-const Blog = mongoose.model('Blog', { title: String, contents: String });
+const Blog = mongoose.model('Blog', {
+  title: { type: String, unique: true },
+  contents: String
+});
 
 mongoose.connect('mongodb://crypto:AU2J5MekN9ze@ds019101.mlab.com:19101/playground');
 var db = mongoose.connection;
