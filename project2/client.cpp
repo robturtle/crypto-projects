@@ -112,9 +112,7 @@ int main(int argc, const char * const argv[]) {
     request.setOpt<HttpHeader>(headers);
     request.setOpt<Post>(true);
     request.setOpt<PostFields>(body);
-    if (debug) {
-      request.setOpt<Verbose>(true);
-    }
+    request.setOpt<Verbose>(debug);
     request.setOpt<WriteStream>(&response);
     request.perform();
     cout << response.str() << endl;
