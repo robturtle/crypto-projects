@@ -96,6 +96,7 @@ int main(int argc, const char * const argv[]) {
     (ostringstream{} << "{\"request\": \"" << cmd.str() << "\"}").str()
   };
 
+  ostringstream response;
   try {
     Cleanup cleanup;
     Easy request;
@@ -113,7 +114,9 @@ int main(int argc, const char * const argv[]) {
     if (debug) {
       request.setOpt<Verbose>(true);
     }
+    request.setOpt<WriteStream>(&response);
     request.perform();
+    cout << response.str() << endl;
   } catch (RuntimeError &e) {
     cout << e.what() << endl;
   } catch (LogicError &e) {
