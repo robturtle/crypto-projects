@@ -15,7 +15,7 @@ const https = require('https');
 const forceSSL = require('express-force-ssl');
 
 const app = express();
-app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 app.set('forceSSLOptions', {
   enable301Redirects: true,
   trustXFPHeader: false,
@@ -51,7 +51,16 @@ app.get('/', (request, response) => {
 
 app.post('/', (request, response) => {
   var ciphertext = request.body.request;
+  if (!ciphertext) return response.send('failed: empty request');
   handleCiphertext(ciphertext, response);
+});
+
+app.get('/signup', (request, response) => {
+  response.sendFile(`${__dirname}/signup.html`);
+});
+
+app.post('/signup', (request, response) => {
+  response.send('OK'); // TODO redirect to index
 });
 
 /********************************************************************************
@@ -84,7 +93,7 @@ function handleCiphertext(ciphertext, response) {
   var plaintext = ciphertext;
 
   // request accepted, execute normal functions
-  params = plaintext.split('+');
+  params = plaintext.split('-');
   verb      = params[0];
   target    = params[1];
   timestamp = params[2];
@@ -120,5 +129,7 @@ function handleCiphertext(ciphertext, response) {
         });
       }
     });
+  } else {
+    response.send('bad request');
   }
 }
