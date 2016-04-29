@@ -10,8 +10,10 @@ String.prototype.replaceAll = function(search, replacement) {
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const express = require('express');
+const https = require('https');
+const httpsOptions = require('config/certificates');
 
-const app = express();
+const app = express(httpsOptions);
 app.use(bodyParser.json());
 
 const Blog = mongoose.model('Blog', {
