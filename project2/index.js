@@ -24,10 +24,10 @@ app.set('forceSSLOptions', {
 });
 app.use(forceSSL);
 const httpsOptions = require('./config/certificates');
-http.createServer(app).listen(80);
-console.log(`http listening on 80`);
-https.createServer(httpsOptions, app).listen(443);
-console.log(`SSL listening on 443`);
+http.createServer(app).listen(8080);
+console.log(`http listening on 8080`);
+https.createServer(httpsOptions, app).listen(3000);
+console.log(`SSL listening on 3000`);
 
 const Blog = mongoose.model('Blog', {
   title: { type: String, unique: true },

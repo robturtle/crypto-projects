@@ -42,7 +42,7 @@ string url_encode(const string &raw) {
 }
 
 
-static string url { "https://westudy.online" };
+static string url { "https://localhost:3000" };
 
 int main(int argc, const char * const argv[]) {
   string verb, target, contents;
