@@ -4,3 +4,6 @@
 [submodule "project2/lib/curlpp"]
 	path = project2/lib/curlpp
 	url = https://github.com/jpbarrette/curlpp
+[submodule "project2/letsencrypt"]
+	path = project2/letsencrypt
+	url = https://github.com/letsencrypt/letsencrypt

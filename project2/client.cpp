@@ -17,6 +17,7 @@ string basename(const string &fname) {
   return fname.substr(0, pos);
 }
 
+// TODO remove it
 string url_encode(const string &raw) {
   ostringstream escaped;
   escaped.fill('0');
@@ -117,8 +118,10 @@ int main(int argc, const char * const argv[]) {
     request.setOpt<WriteStream>(&response);
     request.perform();
     cout << response.str() << endl;
+
   } catch (RuntimeError &e) {
     cout << e.what() << endl;
+
   } catch (LogicError &e) {
     cout << e.what() << endl;
   }
