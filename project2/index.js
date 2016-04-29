@@ -10,10 +10,10 @@ String.prototype.replaceAll = function(search, replacement) {
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const express = require('express');
+const http = require('http');
 const https = require('https');
-const httpsOptions = require('config/certificates');
 
-const app = express(httpsOptions);
+const app = express();
 app.use(bodyParser.json());
 
 const Blog = mongoose.model('Blog', {
@@ -26,8 +26,10 @@ var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', () => console.log('connected to mongodb'));
 
-const port = 80;
-app.listen(port, () => console.log(`listening on ${port}`));
+const port = 443;
+const httpsOptions = require('./config/certificates');
+https.createServer(httpsOptions, app).listen(port);
+console.log(`web server listening on ${port}`);
 
 /********************************************************************************
  * Server route settings
