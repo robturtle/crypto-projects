@@ -24,7 +24,7 @@ var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', () => console.log('connected to mongodb'));
 
-const port = 3000; // TODO change to 80 when production
+const port = 80;
 app.listen(port, () => console.log(`listening on ${port}`));
 
 /********************************************************************************
