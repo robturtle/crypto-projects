@@ -12,9 +12,22 @@ const bodyParser = require('body-parser');
 const express = require('express');
 const http = require('http');
 const https = require('https');
+const forceSSL = require('express-force-ssl');
 
 const app = express();
 app.use(bodyParser.json());
+app.set('forceSSLOptions', {
+  enable301Redirects: true,
+  trustXFPHeader: false,
+  httpsPort: 443,
+  sslRequiredMessage: 'SSL Required.'
+});
+app.use(forceSSL);
+const httpsOptions = require('./config/certificates');
+http.createServer(app).listen(80);
+console.log(`http listening on 80`);
+https.createServer(httpsOptions, app).listen(443);
+console.log(`SSL listening on 443`);
 
 const Blog = mongoose.model('Blog', {
   title: { type: String, unique: true },
@@ -25,11 +38,6 @@ mongoose.connect('mongodb://crypto:AU2J5MekN9ze@ds019101.mlab.com:19101/playgrou
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', () => console.log('connected to mongodb'));
-
-const port = 443;
-const httpsOptions = require('./config/certificates');
-https.createServer(httpsOptions, app).listen(port);
-console.log(`web server listening on ${port}`);
 
 /********************************************************************************
  * Server route settings
