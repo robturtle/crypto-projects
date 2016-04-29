@@ -6,11 +6,11 @@ set (CMAKE_CXX_FLAGS_RELEASE "-O3")
 set (CMAKE_MACOSX_RPATH 1)
 
 # HTTPS connection
-add_subdirectory (lib/curlcpp)
-include_directories (${CURLCPP_SOURCE_DIR}/include)
+add_subdirectory (lib/curlpp)
+include_directories (lib/curlpp/include)
 
 # arg parsing
 include_directories (lib/tclap/include)
 
 add_executable (client client.cpp)
-target_link_libraries (client curlcpp)
+target_link_libraries (client curlpp)

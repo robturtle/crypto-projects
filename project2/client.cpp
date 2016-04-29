@@ -1,37 +1,16 @@
+#include <list>
 #include <string>
 #include <iostream>
-#include <ostream>
 #include <fstream>
-#include <regex>
+#include <sstream>
 #include "tclap/CmdLine.h"
-#include "curl_easy.h"
-#include "curl_exception.h"
-#include "curl_sender.h"
-#include "curl_receiver.h"
-
+#include "curlpp/cURLpp.hpp"
+#include "curlpp/Easy.hpp"
+#include "curlpp/Options.hpp"
 using namespace std;
 using namespace TCLAP;
-using namespace curl;
-
-string enc(const string &plaintext) {
-  return plaintext; // TODO
-}
-
-string build_post(const string &host, const string &request) {
-  ostringstream body;
-  body << "{\"request\": \"" << request << "\"}";
-
-  ostringstream out;
-  out <<
-    "POST / HTTP/1.1\r\n"
-    "Host: " << host << "\r\n"
-    "Content-Length: " << body.str().length() << "\r\n"
-    "Content-Type: application/json\r\n"
-    "Cache-Control: no-cache\r\n\r\n"
-      << body.str();
-
-  return out.str();
-}
+using namespace cURLpp;
+using namespace cURLpp::Options;
 
 string basename(const string &fname) {
   size_t pos = fname.find_last_of('.');
@@ -61,16 +40,23 @@ string url_encode(const string &raw) {
   return escaped.str();
 }
 
+
+static string url { "localhost:3000" };
+
 int main(int argc, const char * const argv[]) {
   string verb, target, contents;
+  bool debug;
   try {
-    CmdLine cmd("Securely post/delete blog article to/from the blog system.");
+    CmdLine cmd("Securely post/delete blog articles to/from the blog system");
     ValueArg<string> postArg("p", "post", "Post a file to blog system",
                              true, "", "file");
     ValueArg<string> deleteArg("d", "delete", "Delete a blog from blog system",
                                true, "", "article-title");
+    SwitchArg debugArg("", "debug", "Print HTTP link debug info", false);
     cmd.xorAdd(postArg, deleteArg);
+    cmd.add(debugArg);
     cmd.parse(argc, argv);
+    debug = debugArg.getValue();
 
     if (postArg.isSet()) {
       verb = "post";
@@ -95,44 +81,44 @@ int main(int argc, const char * const argv[]) {
     } else {
       verb = "nonsense";
     }
+
   } catch (ArgException &e) {
     cerr << "error: " << e.error() << " for arg " << e.argId() << endl;
   }
 
-  cout << verb << " " << target << " ..." << endl;
+  ostringstream cmd;
+  cmd << verb << "+" << target << "+" << time(nullptr);
+  if (!contents.empty()) {
+    cmd << "+" << contents;
+  } // TODO else forge fake contents to make delete command indistinguishable
 
-  string host = "localhost:3000";
-  ostringstream request;
-  request << verb << "+" << target << "+" << time(nullptr);
-  if (!contents.empty()) { request << "+" << contents;  }
+  string body {
+    (ostringstream{} << "{\"request\": \"" << cmd.str() << "\"}").str()
+  };
 
-  curl_easy easy;
   try {
-    easy.add<CURLOPT_URL>(host.c_str());
-    easy.add<CURLOPT_CONNECT_ONLY>(true);
-    easy.perform();
+    Cleanup cleanup;
+    Easy request;
 
-    curl_sender<string> sender(easy);
-    sender.send(build_post(host, enc(request.str())));
-  } catch (curl_easy_exception error) {
-    curlcpp_traceback errors = error.get_traceback();
-    error.print_traceback();
+    list<string> headers {
+      "Content-Type: application/json"
+    , "Cache-Control: no-cache"
+    , (ostringstream{} << "Content-Length: " << body.length()).str()
+    };
+
+    request.setOpt<Url>(url);
+    request.setOpt<HttpHeader>(headers);
+    request.setOpt<Post>(true);
+    request.setOpt<PostFields>(body);
+    if (debug) {
+      request.setOpt<Verbose>(true);
+    }
+    request.perform();
+  } catch (RuntimeError &e) {
+    cout << e.what() << endl;
+  } catch (LogicError &e) {
+    cout << e.what() << endl;
   }
 
-  curl_receiver<char, 1024> receiver;
-  for (;;) {
-    receiver.receive(easy);
-    int count = receiver.get_received_bytes();
-    if (count) break;
-  }
-  array<char,1024> buffer = receiver.get_buffer();
-  int size = 1;
-  for (auto p = buffer.begin(); *p != 0; ++p) size++;
-  string response(buffer.begin(), buffer.begin() + size);
-
-  regex bodyPattern { "\r\n\r\n(.*)" };
-  smatch match;
-  if (regex_search(response, match, bodyPattern)) {
-    cout << match[1] << endl; // TODO parse response
-  }
+  return 0;
 }
