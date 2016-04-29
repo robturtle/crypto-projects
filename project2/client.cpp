@@ -42,7 +42,7 @@ string url_encode(const string &raw) {
 }
 
 
-static string url { "https://westudy.online" };
+static string url { "https://localhost:3000" };
 
 int main(int argc, const char * const argv[]) {
   string verb, target, contents;
@@ -88,14 +88,12 @@ int main(int argc, const char * const argv[]) {
   }
 
   ostringstream cmd;
-  cmd << verb << "+" << target << "+" << time(nullptr);
+  cmd << verb << "-" << target << "-" << time(nullptr);
   if (!contents.empty()) {
-    cmd << "+" << contents;
+    cmd << "-" << contents;
   } // TODO else forge fake contents to make delete command indistinguishable
 
-  string body {
-    (ostringstream{} << "{\"request\": \"" << cmd.str() << "\"}").str()
-  };
+  string body { "request=" + cmd.str() };
 
   ostringstream response;
   try {
@@ -103,7 +101,7 @@ int main(int argc, const char * const argv[]) {
     Easy request;
 
     list<string> headers {
-      "Content-Type: application/json"
+      "Content-Type: application/x-www-form-urlencoded"
     , "Cache-Control: no-cache"
     , (ostringstream{} << "Content-Length: " << body.length()).str()
     };
