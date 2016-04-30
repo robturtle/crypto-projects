@@ -40,12 +40,23 @@ app.use(session({
 
 // page utils
 app.use(express.static(`${__dirname}/public`));
+app.set('view engine', 'ejs');
+
 const flash = require('connect-flash');
 app.use(flash());
-app.set('view engine', 'ejs');
+
 const expressLayouts = require('express-ejs-layouts');
 app.set('layout', 'default');
 app.use(expressLayouts);
+
+const passport = require('passport');
+app.use(passport.initialize());
+app.use(passport.session());
+require('./app/passport')(passport);
+app.use(function(req, res, next) {
+  res.locals.user = req.user;
+  next();
+});
 
 // database
 const mongoose = require('mongoose');
@@ -56,10 +67,5 @@ mongoose.connect(configDB.url, () => console.log('database connected...'));
 const morgan = require('morgan');
 app.use(morgan('dev'));
 
-// extended feature
-//const passport = require('passport'); // other account system
-//app.use(passport.initialize());
-//app.use(passport.session());
-
 // routes ================================================================================
-require('./app/routes.js')(app/*, passport*/);
+require('./app/routes.js')(app, passport);
