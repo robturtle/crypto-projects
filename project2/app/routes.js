@@ -1,7 +1,17 @@
 /* jslint esversion: 6 */
+const Blog = require('../models/blog');
+const handleRequests = require('./handle-requests');
+
 module.exports = function(app, passport) {
 
-  app.get('/', (req, res) => res.render('pages/index.ejs'));
+  app.post('/', handleRequests);
+
+  app.get('/', (req, res) => {
+    Blog.find((err, blogs) => {
+      if (err) throw err;
+      res.render('pages/index.ejs', { blogs: blogs });
+    });
+  });
 
   app.get('/login', (req, res) => res.render('pages/login.ejs', {
     message: req.flash('loginMessage')
