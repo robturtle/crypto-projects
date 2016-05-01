@@ -152,10 +152,12 @@ string sendRequest(const string &body) {
     Cleanup cleanup;
     Easy request;
 
+    ostringstream len;
+    len << "Content-Length: " << body.length();
     list<string> headers {
       "Content-Type: application/x-www-form-urlencoded"
         , "Cache-Control: no-cache"
-        , (ostringstream{} << "Content-Length: " << body.length()).str()
+        , len.str()
         };
 
     request.setOpt<Url>(url);
@@ -182,24 +184,25 @@ string authUser() {
   // TODO otherwise:
   readUserInfo();
   symKey = gen_key_16();
-  string body {
-    (ostringstream{} << "username=" << utils::url_encode(username)
-     << "&password=" << utils::url_encode(password)
-     << "&key=" << utils::url_encode(symKey)).str()
-  };
+  ostringstream bodyStream;
+  bodyStream << "username=" << utils::url_encode(username)
+      << "&password=" << utils::url_encode(password)
+      << "&key=" << utils::url_encode(symKey);
+  string body = bodyStream.str();
   return sendRequest(body);
 }
 
 string constructRequest() {
   string d { ";" };
-  string req = (ostringstream{}
-             << verb
-          <<d<< target
-          <<d<< time(nullptr)
-          <<d<< username
-          <<d<< !isPrivate
-          <<d<< extension
-          <<d<< contents).str();
+  ostringstream reqStream;
+  reqStream << verb
+      <<d<< target
+      <<d<< time(nullptr)
+      <<d<< username
+      <<d<< !isPrivate
+      <<d<< extension
+      <<d<< contents;
+  string req = reqStream.str();
 
   string ciphertext { aes_128_gcm_encrypt(req, symKey) };
   string encoded { utils::url_encode(ciphertext) };

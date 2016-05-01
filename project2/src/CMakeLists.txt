@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.0)
+cmake_minimum_required (VERSION 2.8)
 project (CryptoProject2)
 set (CMAKE_CXX_FLAGS "-std=c++11")
 set (CMAKE_CXX_FLAGS_RELEASE "-O3")
@@ -19,7 +19,7 @@ include_directories (lib/base64)
 find_package (OpenSSL)
 set (OPENSSL_USE_STATIC_LIBS ON)
 
-add_library (crypto SHARED crypto.cpp)
+add_library (crypto crypto.cpp)
 target_link_libraries (crypto ${OPENSSL_CRYPTO_LIBRARY} ${OPENSSL_SSL_LIBRARY} base64)
 install(TARGETS crypto DESTINATION lib)
 
