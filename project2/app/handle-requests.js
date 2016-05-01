@@ -1,28 +1,63 @@
 /* jslint esversion: 6 */
 const Blog = require('../models/blog');
+const User = require('../models/user');
+const Key = require('../models/key');
+const exec = require('child_process').exec;
 
 module.exports = function(req, res) {
-  const postField = req.body.request;
-  if (!postField) res.send('error: empty request');
+  var username;
+  if (req.body.request) {
+    const ciphertext = decodeURIComponent(req.body.request);
+    username = decodeURIComponent(req.body.username);
+    dec(ciphertext, username, res, request => {
+      // TODO check timestamp
+      console.log(`received request: ${request.verb}`);
+      handleRequest(request, res);
+    });
+  }
 
-  const ciphertext = decodeURIComponent(postField);
-  const request = parseRequest(ciphertext);
-
-  // TODO check timestamp
-
-  console.log(`received request: ${request.verb}`);
-  handleRequest(request, res);
+  else if (req.body.password) {
+    const password = decodeURIComponent(req.body.password);
+    username = decodeURIComponent(req.body.username);
+    User.findOne({ 'username': username }, (err, user) => {
+      if (err) throw err;
+      if (!user) return res.status(400).send('Authentication failed.');
+      if (user.validPassword(password)) {
+        Key.findOneAndUpdate({
+          'username': username
+        }, {
+          'username': username,
+          'key': decodeURIComponent(req.body.key),
+          'created_at': new Date()
+        }, { upsert: true }, (err, doc) => {
+          if (err) throw err;
+          return res.send('Authenticated');
+        });
+      } else {
+        return res.status(400).send('Authentication faied.');
+      }
+    });
+  }
 
 };
 
-function dec(ciphertext) {
-  // TODO dec
-  return ciphertext;
+function dec(ciphertext, username, res, callback) {
+  Key.findOne({ 'username': username }, (err, doc) => {
+    if (err) throw err;
+    if (!doc) return res.status(400).send('Unauthorized request');
+    const key = doc.key;
+    exec(`echo "${ciphertext}\n${key}" | ./bin/dec`,
+         (err, stdout, stderr) => {
+           const plaintext = stdout;
+           request = parseRequest(plaintext);
+           callback(request);
+         });
+    doc.remove();
+  });
 }
 
-function parseRequest(ciphertext) {
-  const delim = '-';
-  const plain = dec(ciphertext);
+function parseRequest(plain) {
+  const delim = ';';
   params = plain.split(delim);
   var request = {
     verb: params[0],

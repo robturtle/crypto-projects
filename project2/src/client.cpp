@@ -7,14 +7,18 @@
 #include "curlpp/cURLpp.hpp"
 #include "curlpp/Easy.hpp"
 #include "curlpp/Options.hpp"
+#include "crypto.hpp"
+
+#ifndef WIN32
+#include <termios.h>
+#include <unistd.h>
+#endif
 using namespace std;
 using namespace TCLAP;
 using namespace cURLpp;
 using namespace cURLpp::Options;
+using namespace crypto;
 
-/********************************************************************************
- * Utils
- ********************************************************************************/
 namespace utils {
   vector<string> basenameAndExt(const string &fname) {
     size_t pos = fname.find_last_of('.');
@@ -24,11 +28,11 @@ namespace utils {
     };
   }
 
-  string urlEncode(const string &raw) {
+  string url_encode(const string &value) {
     ostringstream escaped;
     escaped.fill('0');
     escaped << hex;
-    for (string::const_iterator i = raw.begin(), n = raw.end(); i != n; ++i) {
+    for (string::const_iterator i = value.begin(), n = value.end(); i != n; ++i) {
       string::value_type c = (*i);
       // Keep alphanumeric and other accepted characters intact
       if (isalnum(c) || c == '-' || c == '_' || c == '.' || c == '~') {
@@ -43,12 +47,40 @@ namespace utils {
     return escaped.str();
   }
 
+  void setStdinEcho(bool enable = true)
+  {
+#ifdef WIN32
+    HANDLE hStdin = GetStdHandle(STD_INPUT_HANDLE);
+    DWORD mode;
+    GetConsoleMode(hStdin, &mode);
+    if( !enable )
+      mode &= ~ENABLE_ECHO_INPUT;
+    else
+      mode |= ENABLE_ECHO_INPUT;
+    SetConsoleMode(hStdin, mode );
+#else
+    struct termios tty;
+    tcgetattr(STDIN_FILENO, &tty);
+    if( !enable )
+      tty.c_lflag &= ~ECHO;
+    else
+      tty.c_lflag |= ECHO;
+    (void) tcsetattr(STDIN_FILENO, TCSANOW, &tty);
+#endif
+  }
+
+  void getPassword(string &password) {
+    setStdinEcho(false);
+    getline(cin, password);
+    setStdinEcho(true);
+  }
 } /* ns utils */
 
 namespace {
-  string url { "https://localhost:3000" };
+  string url;
   string verb, target, contents, extension;
   string username, password;
+  string symKey;
   bool isPrivate = false;
   bool debug = false;
 }
@@ -69,6 +101,7 @@ void parseArgs(int argc, const char * const argv[]) {
     cmd.add(localArg);
     cmd.parse(argc, argv);
     debug = debugArg.getValue();
+    isPrivate = privateArg.getValue();
     if (localArg.getValue()) {
       url = "https://localhost:3000";
     } else {
@@ -107,25 +140,13 @@ void parseArgs(int argc, const char * const argv[]) {
 }
 
 void readUserInfo() {
-  // TODO
-  username = "Yang Liu";
-  password = "5f84AADA";
+  cout << "username: ";
+  getline(cin, username);
+  cout << "password: ";
+  utils::getPassword(password);
 }
 
-string constructRequest() {
-  string d { "-" };
-  string req = (ostringstream{}
-             << verb
-          <<d<< target
-          <<d<< time(nullptr)
-          <<d<< username
-          <<d<< isPrivate
-          <<d<< extension
-          <<d<< contents).str();
-  return "request=" + utils::urlEncode(req);
-}
-
-void sendRequest(const string &body) {
+string sendRequest(const string &body) {
   ostringstream response;
   try {
     Cleanup cleanup;
@@ -145,6 +166,7 @@ void sendRequest(const string &body) {
     request.setOpt<WriteStream>(&response);
     request.perform();
     cout << response.str() << endl;
+    return response.str();
 
   } catch (RuntimeError &e) {
     cout << e.what() << endl;
@@ -152,18 +174,46 @@ void sendRequest(const string &body) {
   } catch (LogicError &e) {
     cout << e.what() << endl;
   }
+  return "";
 }
 
-void authUser() {
+string authUser() {
   // TODO if privkey found, use it
   // TODO otherwise:
   readUserInfo();
-  // TODO send auth request to server
+  symKey = gen_key_16();
+  string body {
+    (ostringstream{} << "username=" << utils::url_encode(username)
+     << "&password=" << utils::url_encode(password)
+     << "&key=" << utils::url_encode(symKey)).str()
+  };
+  return sendRequest(body);
+}
+
+string constructRequest() {
+  string d { ";" };
+  string req = (ostringstream{}
+             << verb
+          <<d<< target
+          <<d<< time(nullptr)
+          <<d<< username
+          <<d<< !isPrivate
+          <<d<< extension
+          <<d<< contents).str();
+
+  string ciphertext { aes_128_gcm_encrypt(req, symKey) };
+  string encoded { utils::url_encode(ciphertext) };
+  if (debug) {
+    cout << "ciphertext: " << ciphertext << endl
+         << "key       : " << symKey << endl;
+  }
+  return string { "request=" +  encoded + "&username=" + username };
 }
 
 int main(int argc, const char * const argv[]) {
   parseArgs(argc, argv);
-  authUser();
+  string response = authUser();
+  //if (response != "Authenticated") return 2;
   string body = constructRequest();
   sendRequest(body);
 }

@@ -16,9 +16,6 @@ include_directories (lib/tclap/include)
 add_subdirectory (lib/base64)
 include_directories (lib/base64)
 
-add_executable (client client.cpp)
-target_link_libraries (client curlpp)
-
 find_package (OpenSSL)
 set (OPENSSL_USE_STATIC_LIBS ON)
 
@@ -26,7 +23,8 @@ add_library (crypto SHARED crypto.cpp)
 target_link_libraries (crypto ${OPENSSL_CRYPTO_LIBRARY} ${OPENSSL_SSL_LIBRARY} base64)
 install(TARGETS crypto DESTINATION lib)
 
-add_subdirectory (examples)
+add_executable (client client.cpp)
+target_link_libraries (client curlpp crypto)
 
 add_executable (gen_key gen_key.cpp)
 target_link_libraries (gen_key crypto)
@@ -41,3 +39,6 @@ install(
   TARGETS gen_key dec enc
   DESTINATION ${PROJECT_SOURCE_DIR}/../bin
   )
+
+add_subdirectory (examples)
+
