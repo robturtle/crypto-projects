@@ -1,1 +1,27 @@
-<p>Placeholder for blogs</p>
+<div class="row">
+
+  <div class="col-md-8">
+
+    <% blogs.forEach(function(blog) { %>
+      <% if (blog.public || (user && blog.author === user.username)) { %>
+        <h2>
+          <%= blog.title %>
+          <% if (blog.public) { %>
+            <small class="text-success">public</small>
+          <% } else { %>
+            <small class="text-danger">private</small>
+          <% } %>
+        </h2>
+        <p class="lead">
+          by <%= blog.author %>
+        </p>
+        <hr/>
+        <div class="container">
+          <%- blog.renderedContents %>
+        </div>
+      <% } %>
+    <% }); %>
+
+  </div>
+
+</div>
