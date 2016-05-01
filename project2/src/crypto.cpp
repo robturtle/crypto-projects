@@ -27,13 +27,15 @@ namespace crypto {
   string gen_key_16() {
     word key_bytes[16];
     RAND_bytes(key_bytes, sizeof(key_bytes));
-    return string((char *)key_bytes, sizeof(key_bytes));
+    string key{ (char *)key_bytes, sizeof(key_bytes) };
+    return base64::encode(key);
   }
 
   // return a base64 ciphertext
-  string aes_128_gcm_encrypt(const string& plaintext, const string& key) {
+  string aes_128_gcm_encrypt(const string& plaintext, const string& base64_key) {
     aes_init();
 
+    string key { base64::decode(base64_key) };
     size_t enc_length = plaintext.length() * 3;
     if (enc_length < 48) enc_length = 48;
     words output;
@@ -59,11 +61,12 @@ namespace crypto {
   }
 
 
-  string aes_128_gcm_decrypt(const string& base64, const string& key)
+  string aes_128_gcm_decrypt(const string& base64_ciphertext, const string& base64_key)
   {
     aes_init();
 
-    string decoded { base64::decode(base64) };
+    string key     { base64::decode(base64_key) };
+    string decoded { base64::decode(base64_ciphertext) };
     vector<word> ciphertext(decoded.begin(), decoded.end());
     word tag[AES_BLOCK_SIZE];
     word iv[AES_BLOCK_SIZE];

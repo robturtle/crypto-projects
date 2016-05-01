@@ -6,7 +6,9 @@ using namespace crypto;
 int main(int argc, const char * const argv[])
 {
   //aes_init();
-  string key { gen_key_16() };
+  //string key { gen_key_16() };
+  string key = "kawtJachrRLNL2DvavVCaQ==";
+  cout << "key: " << key << endl;
 
   //text to encrypt
   string plaintext;
@@ -14,7 +16,6 @@ int main(int argc, const char * const argv[])
     plaintext= "crypto project 2";
   } else {
     plaintext = string(argv[1]);
-    //plaintext.resize(plaintext.find('\0'), '\0');
   }
   cout << "plaintext  : " << plaintext << endl;
 
