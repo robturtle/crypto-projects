@@ -23,9 +23,12 @@ find_package (OpenSSL)
 set (OPENSSL_USE_STATIC_LIBS ON)
 
 if (OPENSSL_FOUND)
-add_executable (enc main-encrypt.cpp)
-target_link_libraries (enc ${OPENSSL_CRYPTO_LIBRARY} ${OPENSSL_SSL_LIBRARY} base64)
+  add_library (crypto crypto.cpp)
+  target_link_libraries (crypto ${OPENSSL_CRYPTO_LIBRARY} ${OPENSSL_SSL_LIBRARY} base64)
 
-add_executable (dec main-decrypt.cpp)
-target_link_libraries (dec ${OPENSSL_CRYPTO_LIBRARY} ${OPENSSL_SSL_LIBRARY} base64)
+  #add_executable (enc enc.cpp)
+  #target_link_libraries (enc crypto)
+
+  add_subdirectory (examples)
+
 endif (OPENSSL_FOUND)
