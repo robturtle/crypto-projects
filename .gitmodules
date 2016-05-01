@@ -1,9 +1,9 @@
-[submodule "project2/lib/tclap"]
-	path = project2/lib/tclap
-	url = https://github.com/eile/tclap
-[submodule "project2/lib/curlpp"]
-	path = project2/lib/curlpp
+[submodule "project2/src/lib/--force"]
+	path = project2/src/lib/--force
 	url = https://github.com/jpbarrette/curlpp
-[submodule "project2/letsencrypt"]
-	path = project2/letsencrypt
-	url = https://github.com/letsencrypt/letsencrypt
+[submodule "project2/src/lib/tclap"]
+	path = project2/src/lib/tclap
+	url = https://github.com/eile/tclap
+[submodule "project2/src/lib/curlpp"]
+	path = project2/src/lib/curlpp
+	url = https://github.com/jpbarrette/curlpp

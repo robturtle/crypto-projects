@@ -126,7 +126,6 @@ string constructRequest() {
 }
 
 void sendRequest(const string &body) {
-
   ostringstream response;
   try {
     Cleanup cleanup;
@@ -153,12 +152,18 @@ void sendRequest(const string &body) {
   } catch (LogicError &e) {
     cout << e.what() << endl;
   }
+}
 
+void authUser() {
+  // TODO if privkey found, use it
+  // TODO otherwise:
+  readUserInfo();
+  // TODO send auth request to server
 }
 
 int main(int argc, const char * const argv[]) {
   parseArgs(argc, argv);
-  readUserInfo();
+  authUser();
   string body = constructRequest();
   sendRequest(body);
 }
