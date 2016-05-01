@@ -6,3 +6,4 @@ ltxpng/
 node_modules
 build/
 config/
+bin/

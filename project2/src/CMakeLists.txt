@@ -22,13 +22,22 @@ target_link_libraries (client curlpp)
 find_package (OpenSSL)
 set (OPENSSL_USE_STATIC_LIBS ON)
 
-if (OPENSSL_FOUND)
-  add_library (crypto crypto.cpp)
-  target_link_libraries (crypto ${OPENSSL_CRYPTO_LIBRARY} ${OPENSSL_SSL_LIBRARY} base64)
+add_library (crypto SHARED crypto.cpp)
+target_link_libraries (crypto ${OPENSSL_CRYPTO_LIBRARY} ${OPENSSL_SSL_LIBRARY} base64)
+install(TARGETS crypto DESTINATION lib)
 
-  #add_executable (enc enc.cpp)
-  #target_link_libraries (enc crypto)
+add_subdirectory (examples)
 
-  add_subdirectory (examples)
+add_executable (gen_key gen_key.cpp)
+target_link_libraries (gen_key crypto)
 
-endif (OPENSSL_FOUND)
+add_executable (enc enc.cpp)
+target_link_libraries (enc crypto)
+
+add_executable (dec dec.cpp)
+target_link_libraries (dec crypto)
+
+install(
+  TARGETS gen_key dec enc
+  DESTINATION ${PROJECT_SOURCE_DIR}/../bin
+  )
