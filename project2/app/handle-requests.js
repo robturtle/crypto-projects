@@ -47,33 +47,32 @@ function handleRequest(request, res) {
         return res.status(400).send('error: unsupported file format');
       }
     }
-    Blog.findOneAndUpdate({ 'title': request.target },
-                          {
-                            'title': request.target,
-                            'author': request.username,
-                            'contents': request.contents,
-                            'public': request.public,
-                            'extension': request.extension,
-                            'renderedContents': request.rendered
-                          },
-                          { upsert: true },
-                          (err, doc) => {
-                            if (err) throw err;
-                            return res.send('OK');
-                          }
-                         );
+    Blog.findOneAndUpdate({
+      'title': request.target,
+      'author': request.username
+    }, {
+      'title': request.target,
+      'author': request.username,
+      'contents': request.contents,
+      'public': request.public,
+      'extension': request.extension,
+      'renderedContents': request.rendered
+    }, { upsert: true }, (err, doc) => {
+      if (err) throw err;
+      return res.send('OK');
+    });
   }
 
   else if (verb === 'delete') {
-    Blog.find({ 'title': request.target }, (err, docs) => {
+    Blog.find({
+      'title': request.target,
+      'author': request.username
+    }, (err, docs) => {
       if (err) throw err;
       if (!docs.length) {
         return res.send('failed: post not found');
       } else {
         var post = docs[0];
-        if (post.author != request.username) {
-          return res.send('failed: permission denied');
-        }
         post.remove((err) => {
           if (err) throw err;
           return res.send('OK');
