@@ -29,6 +29,7 @@ module.exports = function(app, passport) {
   });
 
   app.get('/profile', isLoggedIn, (req, res) => res.render('pages/profile.ejs'));
+  app.get('/about', (req, res) => res.render('pages/profile.ejs'));
 
   function isLoggedIn(req, res, next) {
     if (req.isAuthenticated()) { return next(); }
