@@ -10,7 +10,9 @@
 #include <openssl/rand.h>
 #include <openssl/bio.h>
 /* Initializing OpenSSL */
+#include "base64.h"
 using namespace std;
+using namespace base64;
 
 void handleErrors()
 {
@@ -106,6 +108,13 @@ int main(int, char **argv)
     //Begin Ecnryption
     int outlen = encrypt((unsigned char*) text.data(), text.length(), aes_key, iv_enc, enc_out, enc_tag);
 
-    printf("%s\n%s\n%s\n%u\n", enc_out, enc_tag, aes_key, outlen);
+    cout
+      << outlen << endl
+      << encode(string((char *)enc_out, sizeof(enc_out)).c_str()) << endl
+      << encode(string((char *)enc_tag, sizeof(enc_tag)).c_str()) << endl
+      << encode(string((char *)aes_key, sizeof(aes_key)).c_str()) << endl
+      << encode(string((char *)iv_enc,  sizeof(iv_enc)).c_str()) << endl
+      ;
+
     return 0;
 }

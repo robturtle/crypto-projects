@@ -7,3 +7,6 @@
 [submodule "project2/src/lib/curlpp"]
 	path = project2/src/lib/curlpp
 	url = https://github.com/jpbarrette/curlpp
+[submodule "project2/src/lib/base64"]
+	path = project2/src/lib/base64
+	url = https://github.com/mythagel/base64
