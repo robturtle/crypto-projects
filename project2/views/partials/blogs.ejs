@@ -5,7 +5,7 @@
     <% blogs.forEach(function(blog) { %>
       <% if (blog.public || (user && blog.author === user.username)) { %>
         <h2>
-          <%= blog.title %>
+          <%= blog.shownTitle %>
           <% if (blog.public) { %>
             <small class="text-success">public</small>
           <% } else { %>

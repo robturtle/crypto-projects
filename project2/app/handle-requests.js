@@ -91,6 +91,7 @@ function handleRequest(request, res) {
       'contents': request.contents,
       'public': request.public,
       'extension': request.extension,
+      'shownTitle': toSpaceSeparatedString(request.target),
       'renderedContents': request.rendered
     }, { upsert: true }, (err, doc) => {
       if (err) throw err;
@@ -127,4 +128,13 @@ function render(contents, extension) {
   } else if (extension === 'md') {
     // TODO
   }
+}
+
+function toSpaceSeparatedString(instr) {
+  instr = instr.replace(/^[^a-zA-Z]*/, '');
+  var outstr = instr.replace(/[-_]?([A-Za-z]+)/g, function(str) {
+    str = str.replace(/[-_]/, '');
+    return ' ' + str.toLowerCase();
+  });
+  return outstr.charAt(1).toUpperCase() + outstr.slice(2);
 }
