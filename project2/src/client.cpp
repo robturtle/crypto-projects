@@ -136,8 +136,11 @@ void parseArgs(int argc, const char * const argv[]) {
       }
     } else if (deleteArg.isSet()) {
       verb = "delete";
-      target = deleteArg.getValue();
-      // TODO contents = forge some trash contents
+      string path = deleteArg.getValue();
+      target = utils::basenameAndExt(path)[0];
+      ostringstream trash;
+      for (int i = 0; i < 500; i++) trash << 'X'; // TODO more randomness
+      contents = trash.str(); // conceal real packet size
     } else {
       verb = "nonsense";
     }
@@ -187,7 +190,7 @@ string sendRequest(const string &body) {
 
 string authUser() {
   // TODO if privkey found, use it
-  // TODO otherwise:
+  // otherwise:
   readUserInfo();
   symKey = gen_key_16();
   string body {
@@ -222,7 +225,7 @@ string constructRequest() {
 int main(int argc, const char * const argv[]) {
   parseArgs(argc, argv);
   string response = authUser();
-  //if (response != "Authenticated") return 2;
+  if (response != "Authenticated") return 2;
   string body = constructRequest();
   sendRequest(body);
 }
