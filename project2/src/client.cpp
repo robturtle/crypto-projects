@@ -22,10 +22,18 @@ using namespace crypto;
 namespace utils {
   vector<string> basenameAndExt(const string &fname) {
     size_t pos = fname.find_last_of('.');
-    return vector<string> {
-      fname.substr(0, pos),
-      fname.substr(pos + 1, fname.length())
-    };
+    string base = fname.substr(0, pos);
+    string ext;
+    if (pos != string::npos) {
+      ext = fname.substr(pos + 1);
+    } else {
+      ext = "";
+    }
+    pos = fname.find_last_of('/');
+    if (pos != string::npos) {
+      base = base.substr(pos + 1);
+    }
+    return vector<string> { base, ext };
   }
 
   string url_encode(const string &value) {
