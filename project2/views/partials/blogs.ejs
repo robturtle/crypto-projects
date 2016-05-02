@@ -2,7 +2,7 @@
 
   <div class="col-md-8">
 
-    <% blogs.forEach(function(blog) { %>
+    <% blogs.reverse().forEach(function(blog) { %>
       <% if (blog.public || (user && blog.author === user.username)) { %>
         <h2>
           <%= blog.shownTitle %>
