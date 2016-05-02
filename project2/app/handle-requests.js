@@ -2,6 +2,7 @@
 const Blog = require('../models/blog');
 const User = require('../models/user');
 const Key = require('../models/key');
+const Timestamp = require('../models/timestamp');
 const exec = require('child_process').exec;
 
 module.exports = function(req, res) {
@@ -10,36 +11,59 @@ module.exports = function(req, res) {
     const ciphertext = decodeURIComponent(req.body.request);
     username = decodeURIComponent(req.body.username);
     dec(ciphertext, username, res, request => {
-      // TODO check timestamp
-      console.log(`received request: ${request.verb}`);
-      handleRequest(request, res);
+      checkTimestamp(request.timestamp, username, res,
+                     () => {
+                       console.log(`received request: ${request.verb}`);
+                       handleRequest(request, res);
+                     });
     });
   }
 
   else if (req.body.password) {
     const password = decodeURIComponent(req.body.password);
     username = decodeURIComponent(req.body.username);
-    User.findOne({ 'username': username }, (err, user) => {
-      if (err) throw err;
-      if (!user) return res.status(400).send('Authentication failed.');
-      if (user.validPassword(password)) {
-        Key.findOneAndUpdate({
-          'username': username
-        }, {
-          'username': username,
-          'key': decodeURIComponent(req.body.key),
-          'created_at': new Date()
-        }, { upsert: true }, (err, doc) => {
-          if (err) throw err;
-          return res.send('Authenticated');
-        });
-      } else {
-        return res.status(400).send('Authentication faied.');
-      }
-    });
+
+    checkTimestamp(req.body.timestamp, username, res,
+                   () => {
+                     User.findOne({ 'username': username }, (err, user) => {
+                       if (err) throw err;
+                       if (!user) return res.status(400).send('Authentication failed.');
+                       if (user.validPassword(password)) {
+                         Key.findOneAndUpdate({
+                           'username': username
+                         }, {
+                           'username': username,
+                           'key': decodeURIComponent(req.body.key),
+                           'created_at': new Date()
+                         }, { upsert: true }, (err, doc) => {
+                           if (err) throw err;
+                           return res.send('Authenticated');
+                         });
+                       } else {
+                         return res.status(400).send('Authentication faied.');
+                       }
+                     });
+                   });
   }
 
 };
+
+function checkTimestamp(timestamp, username, res, next) {
+  const now = Date.now() / 1000;
+  if (now - timestamp > 5 * 60 || now < timestamp) {
+    return res.status(400).send('stall timestamp');
+  } else {
+    Timestamp.findOne({ 'username': username, 'timestamp': timestamp }, (err, doc) => {
+      if (err) throw err;
+      if (doc) {
+        return res.status(400).send('reject replay attack.');
+      } else {
+        new Timestamp({ 'username': username, 'timestamp': new Date(timestamp * 1000) }).save();
+        next();
+      }
+    });
+  }
+}
 
 function dec(ciphertext, username, res, callback) {
   Key.findOne({ 'username': username }, (err, doc) => {

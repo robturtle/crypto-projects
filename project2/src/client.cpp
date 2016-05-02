@@ -193,7 +193,8 @@ string authUser() {
   string body {
     (ostringstream{} << "username=" << utils::url_encode(username)
      << "&password=" << utils::url_encode(password)
-     << "&key=" << utils::url_encode(symKey)).str()
+     << "&key=" << utils::url_encode(symKey)
+     << "&timestamp=" << time(nullptr)).str()
   };
   return sendRequest(body);
 }
