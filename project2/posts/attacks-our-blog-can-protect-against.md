@@ -36,7 +36,7 @@ const TimestampSchema = mongoose.Schema({
 ```
 
 > content-needed: reject expired timestamp
-![](https://dl.dropboxusercontent.com/s/fwcm79472ft3r1p/reject-stall-timestamp.png?dl=0)
+![](https://dl.dropboxusercontent.com/s/ik6n9hozf80zpkn/Screenshot%202016-05-02%2023.56.56.png?dl=0)
 
 > content-needed: reject identical timestamp
 ![](https://dl.dropboxusercontent.com/s/xfnrqg0t6pn173v/reject-identical-timestamp.png?dl=0)
