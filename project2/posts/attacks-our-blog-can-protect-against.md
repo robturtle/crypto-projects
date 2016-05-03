@@ -55,7 +55,7 @@ Rejecting identical timestamped requests:
 ## User authentication
 ### Password
 
-###Users are authenticated by their passwords
+### Users are authenticated by their passwords
 
 ```js
 UserSchema.methods.validPassword = function(password) {
@@ -63,7 +63,7 @@ UserSchema.methods.validPassword = function(password) {
 };
 ```
 
-####Passwords are stored as salted hashes
+#### Passwords are stored as salted hashes
 ![](https://dl.dropboxusercontent.com/s/js088uy7njx15wc/Screenshot%202016-05-02%2023.15.06.png)
 
 (Above: Usersnames paired with the salted hash of the users password.)
