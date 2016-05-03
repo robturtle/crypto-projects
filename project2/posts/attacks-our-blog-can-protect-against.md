@@ -12,6 +12,7 @@
 
 > content-needed: screenshot of captured packets
 
+![](https://dl.dropboxusercontent.com/s/56ye2oql9hx94wl/Screenshot%202016-05-03%2012.54.03.png?dl=0)
 
 ## Replay attacks
 
