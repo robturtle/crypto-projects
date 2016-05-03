@@ -61,11 +61,11 @@ const TimestampSchema = mongoose.Schema({
 
 ###Users are authenticated by their passwords
 
-...js
+```js
 UserSchema.methods.validPassword = function(password) {
   return bcrypt.compareSync(password, this.password);
 };
-...
+```
 
 ####Passwords are stored as salted hashes
 ![](https://dl.dropboxusercontent.com/s/js088uy7njx15wc/Screenshot%202016-05-02%2023.15.06.png)
