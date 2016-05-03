@@ -53,7 +53,7 @@ module.exports = function(req, res) {
 function checkTimestamp(timestamp, username, res, next) {
   const now = Date.now() / 1000;
   if (now - timestamp > 5 * 60 || now < timestamp) {
-    return res.status(400).send('stall timestamp');
+    return res.status(400).send('expired timestamp');
   } else {
     Timestamp.findOne({ 'username': username, 'timestamp': timestamp }, (err, doc) => {
       if (err) throw err;
