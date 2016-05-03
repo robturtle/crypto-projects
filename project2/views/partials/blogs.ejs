@@ -4,14 +4,14 @@
 
     <% blogs.reverse().forEach(function(blog) { %>
       <% if (blog.public || (user && blog.author === user.username)) { %>
-        <h2>
+        <h1>
           <%= blog.shownTitle %>
           <% if (blog.public) { %>
             <small class="text-success">public</small>
           <% } else { %>
             <small class="text-danger">private</small>
           <% } %>
-        </h2>
+        </h1>
         <p class="lead">
           by <%= blog.author %>
         </p>
