@@ -61,12 +61,11 @@ const TimestampSchema = mongoose.Schema({
 
 > content-needed: user-authed-by-password
 
-
-> content-needed: password-protected-by-hashing
-
-
+####Passwords are stored as salted hashes
 ![](https://dl.dropboxusercontent.com/s/js088uy7njx15wc/Screenshot%202016-05-02%2023.15.06.png)
+(Above: Usersnames paired with the salted hash of the users password.)
 
+The salted hashing prevents attackers who have already gained access to the blogs databases from using methods such as rainbow tables with precomputed hash values to determine user passwords.
 
 > content-needed: client-link-process-description
 
