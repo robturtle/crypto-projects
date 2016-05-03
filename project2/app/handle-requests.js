@@ -5,7 +5,12 @@ const Key = require('../models/key');
 const Timestamp = require('../models/timestamp');
 const exec = require('child_process').exec;
 const parseMarkdown = require('marked');
-parseMarkdown.setOptions({ gfm: true });
+const highlightAuto = require('highlight.js').highlightAuto;
+
+parseMarkdown.setOptions({
+  gfm: true,
+  highlight: code => highlightAuto(code).value
+});
 
 module.exports = function(req, res) {
   var username;
