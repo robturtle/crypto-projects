@@ -1,6 +1,7 @@
 /* jslint esversion: 6 */
 const Blog = require('../models/blog');
 const handleRequests = require('./handle-requests');
+const genDigest = require('./genDigest');
 
 module.exports = function(app, passport) {
 
@@ -8,6 +9,7 @@ module.exports = function(app, passport) {
 
   app.get('/', (req, res) => {
     Blog.find((err, blogs) => {
+      genDigest(blogs);
       if (err) throw err;
       res.render('pages/index.ejs', { blogs: blogs });
     });

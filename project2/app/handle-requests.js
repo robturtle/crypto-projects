@@ -4,7 +4,8 @@ const User = require('../models/user');
 const Key = require('../models/key');
 const Timestamp = require('../models/timestamp');
 const exec = require('child_process').exec;
-const parseMarkdown = require('node-markdown').Markdown;
+const parseMarkdown = require('marked');
+parseMarkdown.setOptions({ gfm: true });
 
 module.exports = function(req, res) {
   var username;
