@@ -4,6 +4,7 @@ const User = require('../models/user');
 const Key = require('../models/key');
 const Timestamp = require('../models/timestamp');
 const exec = require('child_process').exec;
+const parseMarkdown = require('node-markdown').Markdown;
 
 module.exports = function(req, res) {
   var username;
@@ -150,7 +151,7 @@ function render(contents, extension) {
   if (extension === 'html') {
     return contents;
   } else if (extension === 'md') {
-    // TODO
+    return parseMarkdown(contents);
   }
 }
 
