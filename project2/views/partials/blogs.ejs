@@ -1,39 +1,41 @@
 <div class="row">
 
-  <div class="col-md-8">
+  <div class="col-md-10">
 
     <% blogs.reverse().forEach(function(blog) { %>
       <% if (blog.public || (user && blog.author === user.username)) { %>
-        <h1>
-          <a href="/blogs/<%= encodeURIComponent(blog.author) %>/<%= encodeURIComponent(blog.title) %>">
-            <%= blog.shownTitle %>
-          </a>
-          <% if (blog.public) { %>
-            <small class="text-success">public</small>
-          <% } else { %>
-            <small class="text-danger">private</small>
-          <% } %>
-        </h1>
-        <p class="lead">
-          by <%= blog.author %>
-        </p>
-        <hr/>
-        <div class="container">
+        <div class="article">
+          <h1>
+            <a href="/blogs/<%= encodeURIComponent(blog.author) %>/<%= encodeURIComponent(blog.title) %>">
+              <%= blog.shownTitle %>
+            </a>
+            <% if (blog.public) { %>
+              <small class="text-success">public</small>
+            <% } else { %>
+              <small class="text-danger">private</small>
+            <% } %>
+          </h1>
+          <p class="lead">
+            by <%= blog.author %>
+          </p>
+          <hr/>
+          <div class="container">
+            <% if (blog.more) { %>
+              <%- blog.digest %>
+            <% } else {  %>
+              <%- blog.renderedContents %>
+            <% } %>
+          </div>
           <% if (blog.more) { %>
-            <%- blog.digest %>
-          <% } else {  %>
-            <%- blog.renderedContents %>
+            <br/>
+            <a class="btn btn-primary"
+               href="/blogs/<%= encodeURIComponent(blog.author) %>/<%= encodeURIComponent(blog.title) %>">
+              Read More
+              <span class="glyphicon glyphicon-chevron-right"></span>
+            </a>
           <% } %>
+          <hr/>
         </div>
-        <% if (blog.more) { %>
-          <br/>
-          <a class="btn btn-primary"
-             href="/blogs/<%= encodeURIComponent(blog.author) %>/<%= encodeURIComponent(blog.title) %>">
-            Read More
-            <span class="glyphicon glyphicon-chevron-right"></span>
-          </a>
-        <% } %>
-        <hr/>
       <% } %>
     <% }); %>
 
