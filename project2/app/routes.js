@@ -43,6 +43,17 @@ module.exports = function(app, passport) {
   app.get('/profile', isLoggedIn, (req, res) => res.render('pages/profile.ejs'));
   app.get('/about', (req, res) => res.render('pages/about.ejs'));
 
+  app.get('/blogs/:username/:title', (req, res) => {
+    Blog.findOne({
+      'author': req.params.username,
+      'title': req.params.title
+    }, (err, doc) => {
+      if (err) throw err;
+      if (!doc) return res.status(404).send('Post not existed');
+      res.render('pages/post.ejs', { post: doc });
+    });
+  });
+
   function isLoggedIn(req, res, next) {
     if (req.isAuthenticated()) { return next(); }
     res.redirect('/');

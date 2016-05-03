@@ -1,0 +1,25 @@
+.post {
+  font-family: 'Lora', 'Times New Roman', serif;
+  font-size: 20px;
+  color: #404040;
+}
+.post p {
+  line-height: 1.5;
+  margin: 30px 0;
+}
+.post h1,
+.post h2,
+.post h3,
+.post h4,
+.post h5,
+.post h6 {
+  font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-weight: 800;
+}
+.post blockquote {
+  padding: 0px 20px;
+}
+.title {
+  text-align: center;
+  margin: 60px auto;
+}

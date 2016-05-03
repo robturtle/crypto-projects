@@ -5,7 +5,9 @@
     <% blogs.reverse().forEach(function(blog) { %>
       <% if (blog.public || (user && blog.author === user.username)) { %>
         <h1>
-          <%= blog.shownTitle %>
+          <a href="/blogs/<%= encodeURIComponent(blog.author) %>/<%= encodeURIComponent(blog.title) %>">
+            <%= blog.shownTitle %>
+          </a>
           <% if (blog.public) { %>
             <small class="text-success">public</small>
           <% } else { %>
@@ -24,8 +26,12 @@
           <% } %>
         </div>
         <% if (blog.more) { %>
-          <hr/>
-          <a class="btn btn-primary" href="#">Read More <span class="glyphicon glyphicon-chevron-right"></span></a>
+          <br/>
+          <a class="btn btn-primary"
+             href="/blogs/<%= encodeURIComponent(blog.author) %>/<%= encodeURIComponent(blog.title) %>">
+            Read More
+            <span class="glyphicon glyphicon-chevron-right"></span>
+          </a>
         <% } %>
         <hr/>
       <% } %>
