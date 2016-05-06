@@ -1,7 +1,13 @@
+#include "crypto.hpp"
+#include <openssl/rsa.h>
+#include <openssl/pem.h>
 #include <openssl/aes.h>
 #include <openssl/evp.h>
 #include <openssl/rand.h>
+#include <openssl/err.h>
+#include <openssl/x509.h>
 #include <string>
+#include <fstream>
 #include <sstream>
 #include <vector>
 #include <iostream>
@@ -14,11 +20,7 @@ using words = vector<word>;
 void aes_init() {
   static int init = 0;
   if (init == 0) {
-    EVP_CIPHER_CTX e_ctx, d_ctx;
-    // initialize openssl ciphers
     OpenSSL_add_all_ciphers();
-    // initialize random number generator (for IVs)
-    int rv = RAND_load_file("/dev/urandom", 32);
   }
 }
 
@@ -86,5 +88,133 @@ namespace crypto {
 
     return string(plaintext.begin(), plaintext.end());
   }
+
+
+  /* class Rsa */
+  Rsa::Rsa(const size_t keyLength, const size_t pubExponent) {
+    initNew(keyLength, pubExponent);
+  }
+
+  Rsa::Rsa(const string& pubFname, const string& priFname) {
+    bool existsPubFile = ifstream{ pubFname }.good();
+    bool existsPriFile = ifstream{ priFname }.good();
+    if (existsPubFile || existsPriFile) {
+      if (existsPubFile) {
+        ifstream in { pubFname };
+        string pubKeyString { istreambuf_iterator<char>(in), istreambuf_iterator<char>() };
+        readPublicKey(pubKeyString);
+        hasPub = true;
+      }
+      if (existsPriFile) {
+        ifstream in { priFname };
+        string priKeyString { istreambuf_iterator<char>(in), istreambuf_iterator<char>() };
+        readPrivateKey(priKeyString);
+        hasPri = true;
+      }
+      maxEncSize = RSA_size(keypair) - 41 - 1 - 1;
+    } else {
+      initNew();
+      ofstream pubOut { pubFname };
+      ofstream priOut { priFname };
+      write(pubOut, priOut);
+    }
+  }
+
+  void Rsa::initNew(size_t keyLength, size_t pubExponent) {
+    keypair = RSA_generate_key(keyLength, pubExponent, nullptr, nullptr);
+    maxEncSize = keyLength/8 - 41/* TODO explain */ - 1/* '\0' */ - 1 /* TODO explain */;
+    hasPub = true;
+    hasPri = true;
+  }
+
+
+  void Rsa::write(ostream& pubOut, ostream& priOut) {
+    if (hasPub) {
+      BIO *pub = BIO_new(BIO_s_mem());
+      PEM_write_bio_RSAPublicKey(pub, keypair);
+      size_t pub_len = BIO_pending(pub);
+      char *pub_key = (char*)malloc(pub_len + 1);
+      BIO_read(pub, pub_key, pub_len);
+      pub_key[pub_len] = '\0';
+      pubOut << pub_key << endl;
+      BIO_free_all(pub);
+      free(pub_key);
+    }
+    if (hasPri) {
+      BIO *pri = BIO_new(BIO_s_mem());
+      PEM_write_bio_RSAPrivateKey(pri, keypair, NULL, NULL, 0, NULL, NULL);
+      size_t pri_len = BIO_pending(pri);
+      char *pri_key = (char*)malloc(pri_len + 1);
+      BIO_read(pri, pri_key, pri_len);
+      pri_key[pri_len] = '\0';
+      priOut << pri_key << endl;
+      BIO_free_all(pri);
+      free(pri_key);
+    }
+  }
+
+  void Rsa::readPublicKey(const string& key) {
+    BIO *bo = BIO_new(BIO_s_mem());
+    BIO_write(bo, &key[0], key.length()+1);
+    PEM_read_bio_RSAPublicKey(bo, &keypair, nullptr, nullptr);
+  }
+
+  void Rsa::readPrivateKey(const string& key) {
+    BIO *bo = BIO_new(BIO_s_mem());
+    BIO_write(bo, &key[0], key.length()+1);
+    PEM_read_bio_RSAPrivateKey(bo, &keypair, nullptr, nullptr);
+  }
+
+
+  RSA* Rsa::getKeypair() const {
+    return keypair;
+  }
+
+  string Rsa::readPlaintext(istream &in) {
+    string plaintext;
+    readPlaintext(in, plaintext);
+    return plaintext;
+  }
+
+  void Rsa::readPlaintext(istream &in, string &plaintext) {
+    plaintext.resize(maxEncSize);
+    in.read(&plaintext[0], maxEncSize);
+    plaintext.resize(in.gcount());
+  }
+
+  string Rsa::encrypt(const string& plaintext) {
+    string ciphertext;
+    ciphertext.resize(RSA_size(keypair));
+    int encLen = RSA_public_encrypt(plaintext.length()+1,
+                                    (word*)plaintext.c_str(),
+                                    (word*)&ciphertext[0],
+                                    keypair, RSA_PKCS1_OAEP_PADDING);
+    handleError(encLen);
+    return base64::encode(ciphertext);
+  }
+
+  string Rsa::decrypt(const string& base64_ciphertext) {
+    string ciphertext { base64::decode(base64_ciphertext) };
+    string plaintext;
+    plaintext.resize(RSA_size(keypair));
+    int decLen = RSA_private_decrypt(RSA_size(keypair),
+                                     (word*)ciphertext.c_str(),
+                                     (word*)&plaintext[0],
+                                     keypair, RSA_PKCS1_OAEP_PADDING);
+    handleError(decLen);
+    return plaintext;
+  }
+
+  void Rsa::handleError(int retVal) {
+    if (retVal >= 0) { return; }
+    string err;
+    err.resize(130); // TODO explain
+    ERR_load_crypto_strings();
+    ERR_error_string(ERR_get_error(), &err[0]);
+    throw err;
+  }
+
+  /* End of class Rsa */
+
 
 } /* ns crypto */

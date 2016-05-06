@@ -35,10 +35,15 @@ target_link_libraries (enc crypto)
 add_executable (dec dec.cpp)
 target_link_libraries (dec crypto)
 
+add_executable (rsa-enc rsa-enc.cpp)
+target_link_libraries (rsa-enc crypto)
+
+add_executable (rsa-dec rsa-dec.cpp)
+target_link_libraries (rsa-dec crypto)
+
 install(
-  TARGETS gen_key dec enc
+  TARGETS gen_key dec enc rsa-enc
   DESTINATION ${PROJECT_SOURCE_DIR}/../bin
   )
 
 add_subdirectory (examples)
-
