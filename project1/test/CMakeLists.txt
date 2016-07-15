@@ -4,7 +4,6 @@ enable_testing ()
 ################################################################################
 add_executable (CodeBreakerTest CodeBreakerTest.cpp)
 target_link_libraries (CodeBreakerTest gtest gtest_main cppqc code_breaker)
-add_test (code-breaker-test CodeBreakerTest)
 
 # for single test
 add_executable (ciphertext_sample ciphertext_sample.cpp)
