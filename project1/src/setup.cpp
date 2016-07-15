@@ -25,7 +25,7 @@ namespace cipher {
       str.erase(0, pos + sep.length());
     }
     if (!str.empty()) words.push_back(str.substr(0, str.length()));
-    return move(words);
+    return words;
   }
 
 
@@ -49,14 +49,14 @@ namespace cipher {
       getline(file, line);
       dicts.push_back(split(line));
     }
-    return move(dicts);
+    return dicts;
   }
 
   // this function only split a single dictionary
   /*
     We could try to start it from the easiest one, i.e. the one who has the least candidates.
 
-    We split the dictionary by its word's length, take the 1st dictionary for example, we will got something 
+    We split the dictionary by its word's length, take the 1st dictionary for example, we will got something
     like this:
     ```ruby
     {
@@ -77,19 +77,19 @@ namespace cipher {
     }
     ```
 
-    As we can see, candidates of the word length 1, 4, 14, and 17 are only of size 1. That is to say, once we came 
-    across ciphertext with such length, we can immediately get its corresponding plaintext word and the partial 
+    As we can see, candidates of the word length 1, 4, 14, and 17 are only of size 1. That is to say, once we came
+    across ciphertext with such length, we can immediately get its corresponding plaintext word and the partial
     key mapping of. The we could go through words with 2 candidates, words with 3 candidates, and so on.
 
-    And for which have the same amount of candidates, of cause we should start checking from the longest one for 
+    And for which have the same amount of candidates, of cause we should start checking from the longest one for
     it can bind more key mappings in the early stage, hence we might detect the mapping conflicts earlier.
 
-    Based on the knowledge learned from the dictionary, let's reconsider the key space. We know that the whole 
+    Based on the knowledge learned from the dictionary, let's reconsider the key space. We know that the whole
     length of the ciphertext is around 500. Considering it's built up with 72 word of each has the length of 7.
-    The size of the key space will be |map[7]|^72 = 12^72. It's impractical to iterate from it. But if we go through 
+    The size of the key space will be |map[7]|^72 = 12^72. It's impractical to iterate from it. But if we go through
     the depth-first search, we can easily prune based on the pre-binded key mappings.
 
-    In order to make the conflict appear as soon as possible, we could sort the sub-dictionaries by letting the word 
+    In order to make the conflict appear as soon as possible, we could sort the sub-dictionaries by letting the word
     with the least fault tolerance take the beginning position.
 
     The fault tolerance should be calculated as: FT(word) = Π (slot number of each letter).
@@ -146,7 +146,7 @@ namespace cipher {
     copy(istream_iterator<string>(in),
          istream_iterator<string>(),
          back_inserter(english_words));
-    return move(english_words);
+    return english_words;
  }
 
   // this function combine them all
@@ -156,7 +156,7 @@ namespace cipher {
     vector<words> dictionaries = load_dictionaries(path + SMALL_DICTS);
     for (const words &dict : dictionaries) maps.push_back(analyze_dictionary(dict));
     maps.push_back(analyze_dictionary(load_english_words(path)));
-    return move(maps);
+    return maps;
   }
 
   void load_dicts(const std::string &path, std::vector<Dictionary> &dicts) {

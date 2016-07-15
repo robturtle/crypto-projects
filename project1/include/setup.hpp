@@ -20,7 +20,7 @@ namespace cipher {
     auto end = words.end();
     out << *i++;
     for (; i != end; ++i) out << sep << *i;
-    return move(out.str());
+    return out.str();
   }
 
   extern std::string basename(const std::string &path);
